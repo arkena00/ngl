@@ -1,0 +1,44 @@
+## [identifier]
+An identifier is a word composed by ascii chars \
+`zeta` 
+
+## [identifier:path]
+An identifier can have a path \
+`source:zeta:alpha:omega`
+
+## [identifier:auto_path]
+Intermediate identifiers can be omitted if a single path exist between the omitted identifiers \
+`source::omega`
+
+## [optional<identifier>]
+An identifier can be optional
+
+## [alias<identifier>]
+An identifier can be aliased \
+`nge:alias ngl:concept ngc` 
+
+## [identifier:described]
+An identifier can be described \
+`ngl:concept matrix` \
+matrix is described as a ngl:concept which is a described identifier
+
+Described identifiers can be connected to other identifiers
+```
+[identifier:described] [optional:identifier]
+{
+    [list:identifier]
+    [optional:[list:edge]]
+}
+```
+Connect a [list:identifier] from [identifier:described] to [list:identifier] using ngl:edge:has
+
+```
+ngl:concept:container matrix
+{
+    ngl:concept rows
+    ngl:concept columns
+    ngl::concept:size // use size as identifier
+    
+    nge:context ngl:concept:math // use matrix as edge source 
+}
+```
