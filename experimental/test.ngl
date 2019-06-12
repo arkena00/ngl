@@ -1,0 +1,78 @@
+
+ngc name
+{
+    <- ngl:concrete // the concept can be concrete
+}
+
+// movie is the identifier for a ngl.concept connected to name and synopsis identifiers
+
+ngc:movie ->
+
+ngc movie
+{
+    ngc:name // ngl:edge.contain ngc:movie -> ngc:name
+
+    ngc:string synopsis
+
+    nge
+    {
+        -> ngc:user
+    }
+}
+
+nge has
+{
+    ngc:* target
+}
+
+
+ngc user
+{
+    ngc:name
+
+    nge:has<ngc:movie>
+
+}
+
+
+
+ngc:user:ngc // concepts in user
+ngc:user:nge // edges in user
+
+ngc:user.has<ngc:movie>
+
+ngc:user - nge:has -> ngc:movie
+
+the entity can make a concept concrete in its environment
+ng:movie movie // movie now exist in then entity env
+
+ng:movie
+
+
+
+ngc movie
+{
+    ngl:entity:descriptor = ads
+}
+
+ngl.concept ngc:database
+{
+
+}
+
+ngc:movie
+ngc:movie.descriptor = ads
+
+
+
+ngc:condition if
+{
+    ngl:alias if
+    ngc:expression<ngx:math:boolean>
+}
+
+ngc:movie movie;
+ngl:if( movie.name == "stargate" )
+{
+
+}
