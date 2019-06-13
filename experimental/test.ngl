@@ -76,3 +76,25 @@ ngl:if( movie.name == "stargate" )
 {
 
 }
+
+
+
+// html
+<form>
+    <input text name />
+</form>
+
+
+ngc::web form
+{
+    input
+}
+
+
+ng::web::form form
+{
+    ngc::input<name, test>
+
+    nge:concretise ng:generator:html
+}
+

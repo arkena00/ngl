@@ -1,0 +1,32 @@
+<idea-plugin>
+    <id>com.neuroshok.ngl_plugin</id>
+    <name>ngl</name>
+    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+
+    <description><![CDATA[
+    Enter short description for your plugin here.<br>
+    <em>most HTML tags may be used</em>
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileTypeFactory implementation="ngl.ngl_file_type_factory"/>
+        <lang.parserDefinition language="ngl" implementationClass="ngl.ngl_parser_definition"/>
+        <lang.syntaxHighlighterFactory language="ngl" implementationClass="ngl.ngl_syntax_highlighter_factory"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+
+
+    </actions>
+
+
+
+
+</idea-plugin>
