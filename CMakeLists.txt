@@ -3,4 +3,4 @@ project(ngl)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(ngl main.cpp)
+add_subdirectory(compiler)
