@@ -15,18 +15,21 @@
 
 
 
-
 file ::= ngl_item*
 
-space ::= "\n" | "\t" | " "
+space ::= "\n" | "\r\n" | "\t" | " "
 
-ngl_item::= expression space*
+ngl_item::= space* expression space*
 
 comment ::= "/" "/"
 
+semicolon ::= ";"
+
 ngl ::= "n" "g" "l"
 
-ngl_axiom ::= ngl ":" identifier
+ngc ::= "n" "g" "c"
+
+ngl_axiom ::= (ngl | ngc) ":" identifier
 
 identifier ::= letter+
 

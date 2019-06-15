@@ -1,11 +1,10 @@
 <idea-plugin>
     <id>com.neuroshok.ngl_plugin</id>
     <name>ngl</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="ads@neuroshok.com" url="http://www.neuroshok.com">Neuroshok</vendor>
 
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    ngl
     ]]></description>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
@@ -27,6 +26,6 @@
     </actions>
 
 
-
+    <depends>com.intellij.modules.lang</depends>
 
 </idea-plugin>

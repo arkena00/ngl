@@ -5,7 +5,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.*;
-import ngl.*;
+import ngl.parser.ngl_parser;
 import psi.*;
 
 import org.jetbrains.annotations.NotNull;
