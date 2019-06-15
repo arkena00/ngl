@@ -22,9 +22,8 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    //version '2019.1.3' // generate parser with this version
+    //version 'CL-2019.1.3' // generate parser with this version
     version 'CL-191-EAP-SNAPSHOT' // eap snapshot for clion, 191 for 2019.1
-    //type 'CL'
 }
 patchPluginXml {
     changeNotes """
@@ -42,6 +41,9 @@ task generateNglLexer(type: GenerateLexer) {
     // target classname, target file will be targetDir/targetClass.java
     targetClass = "ngl_lexer"
 
+    intellij {
+        version = '2019.1.3' // generate parser with this version
+    }
 }
 
 task generateNglParser(type: GenerateParser) {
@@ -57,11 +59,15 @@ task generateNglParser(type: GenerateParser) {
     // path to a directory with generated psi files, relative to the targetRoot
     pathToPsiRoot = 'psi'
 
+    intellij {
+        version = '2019.1.3' // generate parser with this version
+    }
+
 }
 
 compileJava {
-    //dependsOn generateNglParser
-    //dependsOn generateNglLexer
+    dependsOn generateNglParser
+    dependsOn generateNglLexer
 }
 
 buildSearchableOptions.enabled = false
