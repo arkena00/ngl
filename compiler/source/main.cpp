@@ -3,10 +3,9 @@
 
 int main(int argc, const char* argv[])
 {
-    ngl::compiler nglc;
-    ngl::cli cli{ nglc, argv };
+    ngl::cli cli;
 
-    nglc.process();
+    cli.process(argv);
 
     return 0;
 }

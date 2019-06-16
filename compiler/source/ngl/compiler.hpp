@@ -17,12 +17,12 @@ namespace ngl
         void add_flag(flags);
         void add_param(params, std::string value);
 
-        void process();
+        void process(std::string file_path);
 
         void set_file(std::string);
 
     private:
-        std::string file_;
+        std::string file_path_;
         flags flags_;
         std::unordered_map<params, std::string> params_;
     };

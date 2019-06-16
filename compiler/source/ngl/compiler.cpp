@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ngl/compiler.hpp>
 
+#include "llvm/ADT/APInt.h"
 
 #include "antlr4-runtime.h"
 #include "gen/ngl/nglLexer.h"
@@ -47,12 +48,13 @@ namespace ngl
         params_.emplace(param, std::move(value));
     }
 
-    void compiler::process()
+    void compiler::process(std::string file_path)
     {
-        std::ifstream file { file_ };
+        file_path_ = std::move(file_path);
+        std::ifstream file { file_path_ };
         if (!file)
         {
-            std::cerr << "File not found : \"" + file_ + "\"";
+            std::cerr << "File not found : \"" + file_path_ + "\"";
             return;
         }
         std::string file_data { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
@@ -72,9 +74,4 @@ namespace ngl
         std::wcout << "\n\nParse Tree: " << s << std::endl; // Unicode output in the console is very limited.
 
     }
-
-    void compiler::set_file(std::string file)
-    {
-        file_ = std::move(file);
-    }
-} // namespace ngl
+} // ngl
