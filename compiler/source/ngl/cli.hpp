@@ -1,7 +1,8 @@
 #ifndef COMPILER_SOURCE_NGL_CLI_HPP_NGL
 #define COMPILER_SOURCE_NGL_CLI_HPP_NGL
 
-#include "compiler.hpp"
+#include <ngl/compiler.hpp>
+
 namespace ngl
 {
     class compiler;
@@ -11,7 +12,7 @@ namespace ngl
     public:
         cli();
 
-        void process(const char** argv);
+        void process(int argc, const char** argv);
 
     private:
         ngl::compiler nglc_;

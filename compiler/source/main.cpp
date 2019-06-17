@@ -5,7 +5,7 @@ int main(int argc, const char* argv[])
 {
     ngl::cli cli;
 
-    cli.process(argv);
+    cli.process(argc, argv);
 
     return 0;
 }

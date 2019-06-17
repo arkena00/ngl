@@ -1,3 +1,0 @@
-[submodule "compiler/third_party/argh"]
-	path = compiler/third_party/argh
-	url = https://github.com/adishavit/argh.git

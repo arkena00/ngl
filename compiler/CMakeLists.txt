@@ -6,23 +6,25 @@ set(LLVM_PATH c:/lib/llvm8/install)
 #-------------------------------------------------------
 #                    dependencies
 #-------------------------------------------------------
-# lib_cli
-add_subdirectory(third_party/argh)
-add_library(lib_cli ALIAS argh)
 
 # lib_llvm
-#set(LLVM_DIR ${LLVM_PATH}/lib/cmake/llvm)
 set(CMAKE_PREFIX_PATH ${LLVM_PATH}/)
 find_package(LLVM REQUIRED CONFIG)
 if (NOT LLVM_FOUND)
     message(FATAL_ERROR LLVM not found)
 endif()
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
 add_library(lib_llvm INTERFACE)
 target_include_directories(lib_llvm INTERFACE ${LLVM_INCLUDE_DIRS})
 target_compile_definitions(lib_llvm INTERFACE ${LLVM_DEFINITIONS})
-llvm_map_components_to_libnames(llvm_libs Core ExecutionEngine Interpreter MC MCJIT Support nativecodegen)
+target_link_directories(lib_llvm INTERFACE ${LLVM_PATH}/lib)
+llvm_map_components_to_libnames(llvm_libs
+        x86asmparser x86asmprinter x86codegen x86desc x86disassembler x86info x86utils
+        codegen core native nativecodegen)
 target_link_libraries(lib_llvm INTERFACE ${llvm_libs})
+
 
 # lib_antlr
 file(GLOB_RECURSE ANTLR4_SOURCES
@@ -46,7 +48,7 @@ target_compile_definitions(lib_antlr PUBLIC -DANTLR4CPP_STATIC)
 file(GLOB_RECURSE NGL_SOURCES "source/ngl/*.cpp" "source/ngl/*.hpp" "source/gen/ngl/*.cpp")
 add_library(lib_nglc_object OBJECT ${NGL_SOURCES})
 target_include_directories(lib_nglc_object PUBLIC source)
-target_link_libraries(lib_nglc_object lib_llvm lib_antlr lib_cli)
+target_link_libraries(lib_nglc_object lib_llvm lib_antlr)
 
 # lib_nglc interface
 add_library(lib_nglc INTERFACE)
