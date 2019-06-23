@@ -3,6 +3,9 @@ project(nglc)
 
 set(LLVM_PATH c:/lib/llvm8/install)
 
+# disable libs warning
+add_compile_options(/wd4267 /wd4244 /wd4996)
+
 #-------------------------------------------------------
 #                    dependencies
 #-------------------------------------------------------
@@ -25,7 +28,6 @@ llvm_map_components_to_libnames(llvm_libs
         codegen core native nativecodegen)
 target_link_libraries(lib_llvm INTERFACE ${llvm_libs})
 
-
 # lib_antlr
 file(GLOB_RECURSE ANTLR4_SOURCES
         "third_party/antlr4/*.cpp"
@@ -37,24 +39,31 @@ file(GLOB_RECURSE ANTLR4_SOURCES
         "third_party/antlr4/tree/pattern/*.cpp"
         "third_party/antlr4/tree/xpath/*.cpp"
         )
-add_library(lib_antlr OBJECT ${ANTLR4_SOURCES})
-target_include_directories(lib_antlr PUBLIC third_party/antlr4)
-target_compile_definitions(lib_antlr PUBLIC -DANTLR4CPP_STATIC)
+add_library(lib_antlr_object OBJECT ${ANTLR4_SOURCES})
+target_include_directories(lib_antlr_object PUBLIC third_party/antlr4)
+target_compile_definitions(lib_antlr_object PUBLIC -DANTLR4CPP_STATIC)
+
+# lib_nds
+add_subdirectory(third_party/nds)
 
 #-------------------------------------------------------
 #                         nglc
 #-------------------------------------------------------
 # lib_nglc_object
-file(GLOB_RECURSE NGL_SOURCES "source/ngl/*.cpp" "source/ngl/*.hpp" "source/gen/ngl/*.cpp")
+file(GLOB_RECURSE NGL_SOURCES "source/ngl/*.cpp" "source/ngl/*.hpp" "source/gen/antlr4/*.cpp")
 add_library(lib_nglc_object OBJECT ${NGL_SOURCES})
 target_include_directories(lib_nglc_object PUBLIC source)
-target_link_libraries(lib_nglc_object lib_llvm lib_antlr)
+target_link_libraries(lib_nglc_object
+        lib_llvm
+        lib_nds
+        lib_antlr_object $<TARGET_OBJECTS:lib_antlr_object>)
+
 
 # lib_nglc interface
 add_library(lib_nglc INTERFACE)
 target_link_libraries(lib_nglc INTERFACE
-        lib_nglc_object $<TARGET_OBJECTS:lib_nglc_object>
-        lib_antlr $<TARGET_OBJECTS:lib_antlr>)
+        lib_nglc_object $<TARGET_OBJECTS:lib_nglc_object>)
+
 
 # nglc binary
 add_executable(nglc source/main.cpp)
