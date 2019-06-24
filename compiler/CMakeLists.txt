@@ -50,9 +50,13 @@ add_subdirectory(third_party/nds)
 #                         nglc
 #-------------------------------------------------------
 # lib_nglc_object
-file(GLOB_RECURSE NGL_SOURCES "source/ngl/*.cpp" "source/ngl/*.hpp" "source/gen/antlr4/*.cpp")
+file(GLOB_RECURSE NGL_SOURCES
+        "source/ngl/*.cpp"
+        "source/ngl/ast/*.cpp"
+        "source/ngl/*.hpp"
+        "source/gen/antlr4/*.cpp")
 add_library(lib_nglc_object OBJECT ${NGL_SOURCES})
-target_include_directories(lib_nglc_object PUBLIC source)
+target_include_directories(lib_nglc_object PUBLIC include source/gen)
 target_link_libraries(lib_nglc_object
         lib_llvm
         lib_nds

@@ -1,5 +1,5 @@
-#ifndef COMPILER_SOURCE_NGL_COMPILER_HPP_NGL
-#define COMPILER_SOURCE_NGL_COMPILER_HPP_NGL
+#ifndef COMPILER_INCLUDE_NGL_COMPILER_HPP_NGL
+#define COMPILER_INCLUDE_NGL_COMPILER_HPP_NGL
 
 #include <string>
 #include <unordered_map>
@@ -28,4 +28,4 @@ namespace ngl
     };
 } // ngl
 
-#endif // COMPILER_SOURCE_NGL_COMPILER_HPP_NGL
+#endif // COMPILER_INCLUDE_NGL_COMPILER_HPP_NGL
