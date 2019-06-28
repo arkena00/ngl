@@ -1,0 +1,22 @@
+ngc::project zeta
+{
+    ngc:folder{ .root = "c:/" }
+
+    ngc:folder bin;
+    ngc:folder doc;
+
+    ngc:folder include:zeta;
+    ngc:folder source:zeta;
+
+    ngc:folder experimental;
+}
+
+ngl:concrete<ngc::project:zeta>
+
+
+ngc integer{}
+
+ngc:integer{ .context = ngc:data_processing }
+// integer exist consider a contextualisation
+
+ngc:integer size

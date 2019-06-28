@@ -1,0 +1,98 @@
+ngl:concept domain;
+
+ngl:concept:domain math;
+
+ngc swap
+{
+    ngl::data v1;
+    ngl::data v2;
+}
+
+ngl:concrete ngc::swap
+{
+    tmp = .v1;
+    .v1 = .v2
+    .v2 = tmp
+}
+
+ngl:concrete ngc::swap<ngc::integer>
+{
+    tmp = .v1;
+    .v1 = .v2
+    .v2 = tmp
+}
+
+ngc:entity program
+{
+    ngc::output<"enter number">
+
+    ngc::swap
+    {
+        ngc::input
+        ngc::input
+    }
+
+    ngl:concrete<show, integer>
+}
+
+ngl:instruction -> ngl:concrete
+
+ngl:concrete:instruction add
+{
+    -> ngl:entity:computer:arch:x86
+}
+
+ngc add
+{
+    ?;
+    ?;
+}
+
+ngl:entity
+{
+    ngc::add<4, 5>
+}
+
+void add(int a, int b)
+{
+    atomic_add
+}
+
+
+ngc logical_process
+{
+    .storage = register
+
+}
+
+ngc::logical_process instruction
+{
+    .storage = register
+}
+
+ngc::instruction add
+{
+    ngj:concrete
+    {
+        /*impl*/
+    }
+}
+
+
+ngl:algorithm fibo
+{
+    ngc:integer <n>;
+
+    ngl:branch
+    {
+        (n <= 1) n
+        fibo<n - 1> + fibo<n - 2>
+    }
+}
+
+nga test
+{
+    ngl:concept <c>;
+
+    if (c == integer)
+}

@@ -76,5 +76,24 @@ fn main()
     
     //ngl.io.add("coucou" a "c'est " b);
 }
+
+ngl:concept web:dom:div;
+web:dom:div -> ngc:concept:html
+
+html
+{
+    head
+    {
+        title { Exemple }
+    }
+    body
+    {
+        
+    } 
+}
+
+
+
+
 ```
 

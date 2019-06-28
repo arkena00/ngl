@@ -85,9 +85,10 @@ ngl:if( movie.name == "stargate" )
 </form>
 
 
-ngc::web form
+ngc::form login
 {
-    input
+    ngc::mail
+    ngc::password
 }
 
 
@@ -97,4 +98,5 @@ ng::web::form form
 
     nge:concretise ng:generator:html
 }
+
 

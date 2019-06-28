@@ -44,11 +44,9 @@ ngc container
     }
 }
 
-ng array
+ngc array
 {
-    import ngc.container;
-    nga.storage: nge.memory.heap;
-    size: ngc::integer
+   ngc:dimension;
 }
 
 ng.array<ng.int, 20>
@@ -58,4 +56,6 @@ ng vector
     import ngc.container;
 }
 ng.vector<ng.int>
+
+
 ```
