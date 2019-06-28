@@ -1,9 +1,8 @@
 # ngl:ngl
 ngl describe ngl
 ```
-ngl ngl
+ngl ngl // self description
 {
-    descriptor = ngl
     // describe = ngl:entity:environment
     
     // axiom identifiers
@@ -38,6 +37,7 @@ ngl:data
     storage
 }
 ```
+
 
 # ngl:concept
 ```

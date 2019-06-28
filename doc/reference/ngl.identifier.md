@@ -1,6 +1,7 @@
-## [identifier]
+# ngl::identifier
 An identifier is a word composed by ascii chars \
 `zeta` 
+It is determined by the entity describing
 
 ## [identifier:path]
 An identifier can have a path \
@@ -42,3 +43,36 @@ ngl:concept:container matrix
     nge:context ngl:concept:math // use matrix as edge source 
 }
 ```
+
+ngl:concept:container matrix
+{
+    ngl:concept rows
+    ngl:concept columns
+    ngl::concept:size // use size as identifier
+
+    <
+        if ()
+    >
+    ngc:bool dynamic
+    
+    .storage = ?dynamic   
+}
+
+ngc:matrix<rows: 4, columns:4> matrix4x4
+
+## [identifier:parameterized]
+Every described identifier can be parameterized 
+
+ngc:matrix
+<
+    ?dynamic
+
+    if (ngl:true) rows: 4
+    columns:4
+> matrix4x4
+
+## [identifier:concretized]
+ng:matrix<ngc::dynamic>
+
+Use the ngc:matrix and concretise it
+

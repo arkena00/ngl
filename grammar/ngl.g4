@@ -1,25 +1,27 @@
 grammar ngl;
 
-root : ngl_file EOF ;
+root : file EOF;
 
-ngl_file : (ngl_statement | HSPACE | VSPACE)* ;
+file : (statement | HSPACE | VSPACE)*;
 
+statement : expression_description;
 
+identifier_path: IDENTIFIER (identifier_edge IDENTIFIER)+;
+identifier_edge: COLON | DOUBLE_COLON;
 
-identifier: LETTER+ (LETTER | DIGIT)* ;
-identifier_edge: ':' | '::' ;
-identifier_path: identifier (identifier_edge identifier)+ ;
-
-ngl_statement : expression_description ;
-
-expression_description : identifier_path HSPACE identifier SEMI_COLON ;
+expression_description : identifier_path HSPACE IDENTIFIER SEMI_COLON;
 
 
+IDENTIFIER: LETTER+ (LETTER | DIGIT)*;
 
-HSPACE : [ \t]+ ;
-VSPACE :  [\r\n]+  ;
-// SPACE : (' ' | '\r\n' | '\n')+ ;
-DIGIT :  [0-9] ;
-LETTER : [a-zA-Z] ;
 
-SEMI_COLON : ';' ;
+COLON : ':';
+DOUBLE_COLON : '::';
+SEMI_COLON : ';';
+
+DIGIT : [0-9];
+LETTER : [a-zA-Z];
+
+HSPACE : [ \t]+;
+VSPACE :  [\r\n]+ -> skip;
+LINE_COMMENT : '//' ~[\r\n]* -> skip;
