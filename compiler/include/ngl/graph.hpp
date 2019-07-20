@@ -3,9 +3,13 @@
 
 #include <nds/graph.hpp>
 
+#include <string>
+
 namespace ngl
 {
-    using graph = std::string;
+    namespace lang { class identifier; }
+
+    using graph = nds::graph<ngl::lang::identifier>;
 } // ngl
 
 #endif // COMPILER_INCLUDE_NGL_GRAPH_HPP_NGL

@@ -2,6 +2,7 @@
 #define COMPILER_INCLUDE_NGL_PARSER_HPP_NGL
 
 #include <ngl/lexer.hpp>
+#include <ngl/ast/listener.hpp>
 
 namespace ngl
 {

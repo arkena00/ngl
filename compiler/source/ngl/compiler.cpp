@@ -1,17 +1,22 @@
 #include <ngl/compiler.hpp>
 
-#include <ngl/ast/listener.hpp>
-#include <ngl/graph.hpp>
-#include <ngl/lexer.hpp>
-#include <ngl/parser.hpp>
-
-#include <llvm/ADT/APInt.h>
-
-#include <iostream>
 #include <fstream>
+#include <iostream>
+
+#include <ngl/cluster.hpp>
+#include <ngl/lang.hpp>
 
 namespace ngl
 {
+    compiler::compiler()
+    {
+        ngl::lang::identifier ngl{ "ngl" };
+        ngl::lang::identifier alias{ "alias" };
+        ngl::lang::identifier concept{ "concept" };
+
+        process("ngl.ngl");
+    }
+
     void compiler::add_flag(compiler::flags flag)
     {
         flags_ = static_cast<compiler::flags>((uint32_t)flags_ | (uint32_t)flag);
@@ -24,6 +29,8 @@ namespace ngl
 
     void compiler::process(std::string file_path)
     {
+        using namespace std::string_literals;
+
         file_path_ = std::move(file_path);
         std::ifstream file { file_path_ };
         if (!file)
@@ -31,15 +38,9 @@ namespace ngl
             std::cerr << "File not found : \"" + file_path_ + "\"";
             return;
         }
+
         std::string file_data { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
 
-        ngl::lexer lexer{ std::move(file_data) };
-        ngl::parser parser{ lexer };
-
-        ngl::graph graph;
-        ngl::ast_listener listener{ graph };
-        ngl::traverse(parser.ast(), listener);
-
-        std::cout << "\n" << graph;
+        ngl::cluster cluster{ std::move(file_data) };
     }
 } // ngl

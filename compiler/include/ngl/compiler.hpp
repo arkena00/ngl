@@ -1,6 +1,8 @@
 #ifndef COMPILER_INCLUDE_NGL_COMPILER_HPP_NGL
 #define COMPILER_INCLUDE_NGL_COMPILER_HPP_NGL
 
+#include <ngl/graph.hpp>
+
 #include <string>
 #include <unordered_map>
 
@@ -12,7 +14,7 @@ namespace ngl
         enum class flags { debug = 0, f = 2 };
         enum class params { output };
 
-        compiler() = default;
+        compiler();
 
         void add_flag(flags);
         void add_param(params, std::string value);
@@ -22,6 +24,8 @@ namespace ngl
         void set_file(std::string);
 
     private:
+        ngl::graph graph_;
+
         std::string file_path_;
         flags flags_;
         std::unordered_map<params, std::string> params_;

@@ -2,6 +2,7 @@
 #define COMPILER_INCLUDE_NGL_LEXER_HPP_NGL
 
 #include <antlr4/nglLexer.h>
+#include <antlr4/nglParser.h>
 #include <ANTLRInputStream.h>
 
 namespace ngl
@@ -12,8 +13,8 @@ namespace ngl
     class lexer
     {
     public:
-        lexer(std::string data)
-            : antlr_input_{ std::move(data) }
+        lexer(const std::string& data)
+            : antlr_input_{ data }
             , antlr_lexer_{ &antlr_input_ }
         {}
 

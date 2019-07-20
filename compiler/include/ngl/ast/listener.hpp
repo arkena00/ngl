@@ -12,16 +12,18 @@
 
 namespace ngl
 {
+    class cluster;
+
     class ast_listener : public antlr4::nglBaseListener
     {
     public:
-        ast_listener(ngl::graph& graph);
+        ast_listener(ngl::cluster&);
 
     private:
         void enterStatement(antlr4::nglParser::StatementContext * ctx) override;
         void enterExpression_description(antlr4::nglParser::Expression_descriptionContext * ctx) override;
 
-        ngl::graph& graph_;
+        ngl::cluster& cluster_;
     };
 } // ngl
 
