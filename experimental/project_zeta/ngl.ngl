@@ -1,0 +1,26 @@
+ngl project
+{
+    ngc::name = project
+
+    :environment = ngl:host:os
+    :storage:filesystem
+}
+
+ngl:project zeta
+{
+    :name = "project_zeta";
+    :storage:filesystem
+
+    ngl:program program
+    {
+        ngc::name "program_test"
+    }
+}
+
+ngl:entity program
+{
+    ngc::name;
+    ngc::entry_point;
+
+    :environment:windows
+}
