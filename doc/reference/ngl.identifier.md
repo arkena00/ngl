@@ -1,78 +1,105 @@
-# ngl::identifier
-An identifier is a word composed by ascii chars \
-`zeta` 
-It is determined by the entity describing
+# ngl:identifier
+An identifier is a word composed by ascii chars
 
-## [identifier:path]
-An identifier can have a path \
-`source:zeta:alpha:omega`
+Types:
+- _identifier_path_
+    ```
+    source:zeta:alpha:omega
+    ```
+    
+- _identifier_autopath_ \
+    Intermediate identifiers can be omitted if a single path exist between the omitted identifiers
+    ```
+    source::omega
+    ```
+    
+- _descriptor_identifier_
+    An identifier previously described
+    
+- _described_identifier_
+    An undescribed identifier 
 
-## [identifier:auto_path]
-Intermediate identifiers can be omitted if a single path exist between the omitted identifiers \
-`source::omega`
+___
 
-## [optional<identifier>]
-An identifier can be optional
-
-## [alias<identifier>]
-An identifier can be aliased \
-`nge:alias ngl:concept ngc` 
-
-## [identifier:described]
-An identifier can be described \
-`ngl:concept matrix` \
-matrix is described as a ngl:concept which is a described identifier
-
-Described identifiers can be connected to other identifiers
+## alias
+An identifier can be aliased
 ```
-[identifier:described] [optional:identifier]
+? ngl:edge<alias> ngl:concept ngc
+ngl:alias<ngl:concept> ngc
+```
+
+## [description](#description)
+A description gives semantic to an identifier
+
+Types:
+- scalar_description
+- vector_description
+
+### scalar_description
+>_descriptor_identifier_ _described_identifier_
+```
+ngl:concept matrix
+```
+matrix is described as a ngl:concept which is a described_identifier
+
+### vector_description
+
+>_descriptor_identifier_ _described_identifier_
 {
-    [list:identifier]
-    [optional:[list:edge]]
+    _[description]_ `optional,list`
+    identifier
+    _edge_ `optional,list`
 }
-```
-Connect a [list:identifier] from [identifier:described] to [list:identifier] using ngl:edge:has
 
+Example:
 ```
 ngl:concept:container matrix
 {
-    ngl:concept rows
-    ngl:concept columns
-    ngl::concept:size // use size as identifier
+    ngl:concept:number rows
+    ngl:concept:number columns
+    ngl::concept:size // use size as described_identifier
     
     nge:context ngl:concept:math // use matrix as edge source 
 }
 ```
 
-ngl:concept:container matrix
+## redescription
+Every described identifier can be redescripted 
+
+```
+ngl:concept:container:matrix float_matrix
 {
-    ngl:concept rows
-    ngl:concept columns
-    ngl::concept:size // use size as identifier
-
-    <
-        if ()
-    >
-    ngc:bool dynamic
-    
-    .storage = ?dynamic   
+    ngl::float :ngl:concept:number // redescription of ngl:concept:number in float_matrix context
 }
+? // parametric redescription version
+? ngl::matrix<ngl::float :ngl:concept:number> float_matrix;
+```
 
-ngc:matrix<rows: 4, columns:4> matrix4x4
-
-## [identifier:parameterized]
+## parametrization
 Every described identifier can be parameterized 
 
-ngc:matrix
-<
-    ?dynamic
+> _described_identifier_< (_described_identifier_ _new_identifier_) `list(comma separator)` >
 
-    if (ngl:true) rows: 4
-    columns:4
-> matrix4x4
+### explicitly required
+A parameterised identifier can use the order or explicitly named parameters
+```
+ngl:concept:container matrix
+{
+    ngl:concept:number <rows> // 1
+    ngl:concept:number <columns> // 2
+    ngl::concept:size ( rows * columns )
+    
+    <data_type> :data // 3, redescribe :data from ngl::container
+}
 
-## [identifier:concretized]
-ng:matrix<ngc::dynamic>
+// parameters order
+matrix<4, 2, ngl::float> float_matrix;
+// named parameters
+matrix<data_type ngl::float, rows 4, columns 4> float_matrix4x4;
+```
 
-Use the ngc:matrix and concretise it
+## concretization
 
+
+___
+[description]: #description
