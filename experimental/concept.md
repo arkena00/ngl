@@ -21,9 +21,9 @@ ngc size
 
 ngc integer
 {
-    nga.context: ngd.data_processing
-    nga.entity: computer
-    nga.storage: ngc.stack
+    .context: ngd.data_processing
+    .entity: computer
+    .storage: ngc.stack
     
     size: ngc.size
      

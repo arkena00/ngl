@@ -17,8 +17,8 @@ ngc:matrix matrix4x4
     .columns ngc:number
    
 
-    .rows = 4
-    .columns = 4
+    .rows 4
+    .columns 4
 }
 
 ngc matrix4x4
