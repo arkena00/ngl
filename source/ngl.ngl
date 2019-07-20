@@ -1,0 +1,34 @@
+// self descriptor (ngl entity describe its concepts)
+ngl ngl
+{
+    environment;
+
+    storage;
+    data;
+    entity;
+    concept;
+}
+
+
+
+ngl:environment computer
+{
+    ngl:entity os
+
+    ngl:storage ram, hdd
+
+    ngl:data
+    {
+        atom = ngl:byte (8bits)
+    }
+}
+
+ngl:entity:os
+{
+    ngl:entity:storage filesystem
+    ngl:entity:storage stack
+    ngl:entity:storage heap
+}
+
+
+ngl.entity
