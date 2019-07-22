@@ -3,12 +3,12 @@
 - language
     - execution
         - [branch](language/execution/branch.md) 
-        - [function](ngl.execution.function.md) 
-        - [instruction](ngl.execution.instruction.md) 
+        - [function](language/execution/function.md) 
+        - [instruction](language/execution/instruction.md) 
 
 
 
 - library
     - concept
-        - [container](ngl.concept.container.md) 
-        - [math](ngl.concept.math.md) 
+        - [container](library/concept/container.md) 
+        - [math](library/concept/math.md) 
