@@ -1,6 +1,13 @@
-# ngl:execution:branch
+# ngl:execution
+
+## function
 ```
-ngl::branch
+ngl function
+{
+    ngl:data
+}
+
+ngl::function zeta
 {
     comparison_instruction execution_instruction
 }
@@ -8,37 +15,18 @@ ngl::branch
 
 Ex:
 ```
-ng::function test;
-
-ngl::branch
+ngl::function add
 {
+    ngc::int a
+    ngc::int b
     
-}
-``` 
-
-ngl branch
-{
-    
+    ngc::int result
 }
 
-ngl:branch zero_branch
-{
-    ngl:boolean_expression <bool_expr>
-    ngl:execution_block <e>
-    
-    ngl:concrete
-    {
-        ngl:instruction:equal<b, 0>
-    }
-    
-    fn:terminate
-}
+add<2, 4>
 
-int divide(int a, int b)
-{
-    if ( b != 0) return a / b;
-    else terminate;
-}
+
+
 
 ngc binary_function
 {
@@ -49,8 +37,18 @@ ngc binary_function
 
 fn divide
 {
-    
     zero_branch<.b, (.result = .a / .b)>
+}
+
+fn divide
+{
+    ngc::number < [a b result] >
+
+    ngl:branch
+    {
+        b == 0 => fn:terminate
+        => result = a / b
+    }
 }
 
 binary_function<ngc:number> divide
@@ -64,3 +62,5 @@ binary_function<ngc:number> divide
 }
 
 dividde<4, 5>
+
+```
