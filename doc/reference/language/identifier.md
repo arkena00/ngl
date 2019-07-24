@@ -1,71 +1,70 @@
 # ngl:identifier
-An identifier is a word composed by ascii chars
+__`[description]`__
+An identifier is a unique [ngl:data] created by a [ngl:entity] used to describe another [ngl:data].
 
-Types:
+__`[edge]`__
+- [raw_identifier](#raw_identifier)
 - _identifier_path_
-    ```
-    source:zeta:alpha:omega
-    ```
-    
-- _identifier_autopath_ \
-    Intermediate identifiers can be omitted if a single path exist between the omitted identifiers
-    ```
-    source::omega
-    ```
-    
+- _identifier_autopath_
 - _descriptor_identifier_
-    An identifier previously described
-    
 - _described_identifier_
-    An undescribed identifier 
+_______________________________________
 
-___
-
-## alias
+## raw_identifier
+__`[path]`__ [ngl:identifier:description:scalar_description](#scalar_description)
+__`[rule]`__
+- must match a-z
+_______________________________________
+## [alias]
 An identifier can be aliased
+__`[path]`__ [alias]
+__`[example]`__
 ```
 ? ngl:edge<alias> ngl:concept ngc
 ngl:alias<ngl:concept> ngc
 ```
-
-## [description](#description)
-A description gives semantic to an identifier
-
-Types:
-- scalar_description
-- vector_description
-
+_______________________________________
+## [description]
+__`[description]`__
+A description add semantic to an identifier
+__`[edge]`__
+- [scalar_description]
+- [vector_description]
+_______________________________________
 ### scalar_description
->_descriptor_identifier_ _described_identifier_
+__`[path]`__ ngl:identifier:description:scalar_description
+__`[syntax]`__
+_[descriptor_identifier]_ _described_identifier_;
+__`[example]`__
 ```
 ngl:concept matrix
 ```
 matrix is described as a ngl:concept which is a described_identifier
-
+_______________________________________
 ### vector_description
-
+__`[syntax]`__
 >_descriptor_identifier_ _described_identifier_
 {
     _[description]_ `optional,list`
     identifier
     _edge_ `optional,list`
 }
-
-Example:
+__`[example]`__
 ```
 ngl:concept:container matrix
 {
     ngl:concept:number rows
     ngl:concept:number columns
     ngl::concept:size // use size as described_identifier
-    
-    nge:context ngl:concept:math // use matrix as edge source 
+
+    nge:context ngl:concept:math // use matrix as edge source
 }
 ```
-
+_______________________________________
 ## redescription
-Every described identifier can be redescripted 
-
+__`[description]`__
+Every described identifier can be redescripted
+__`[example]`__
 ```
 ngl:concept:container:matrix float_matrix
 {
@@ -74,22 +73,24 @@ ngl:concept:container:matrix float_matrix
 ? // parametric redescription version
 ? ngl::matrix<ngl::float :ngl:concept:number> float_matrix;
 ```
-
+_______________________________________
 ## parametrization
-Every described identifier can be parameterized 
-
-> _described_identifier_< (_described_identifier_ _new_identifier_) `list(comma separator)` >
+__`[description]`__
+Every described identifier can be parameterized
+__`[syntax]`__
+> _described_identifier_< `(` _described_identifier_ _new_identifier_ `) list(comma separator)` >
 
 ### explicitly required
 A parameterised identifier can use the order or explicitly named parameters
+__`[example]`__
 ```
 ngl:concept:container matrix
 {
     ngl:concept:number <rows> // 1
     ngl:concept:number <columns> // 2
     ngl::concept:size ( rows * columns )
-    
-    <data_type> :data // 3, redescribe :data from ngl::container
+
+    <data_type> .data // 3, redescribe :data from ngl::container
 }
 
 // parameters order
@@ -97,9 +98,15 @@ matrix<4, 2, ngl::float> float_matrix;
 // named parameters
 matrix<data_type ngl::float, rows 4, columns 4> float_matrix4x4;
 ```
-
+_______________________________________
 ## concretization
 
 
-___
+_______________________________________
+[alias]: #alias
+[ngl:data]: /doc/reference/language/data
+[ngl:entity]: /doc/reference/language/entity
+
 [description]: #description
+[scalar_description]: #scalar_description
+[vector_description]: #vector_description

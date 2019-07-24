@@ -6,8 +6,6 @@
         - [function](language/execution/function.md) 
         - [instruction](language/execution/instruction.md) 
 
-
-
 - library
     - concept
         - [container](library/concept/container.md) 

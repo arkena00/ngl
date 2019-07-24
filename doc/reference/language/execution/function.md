@@ -4,7 +4,8 @@
 ```
 ngl function
 {
-    ngl:data
+    ngl:data <args>
+    ngl:data result
 }
 
 ngl::function zeta
