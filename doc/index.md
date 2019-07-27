@@ -1,6 +1,8 @@
 # Neuroshok Generic Language
 
-## Prelude
+## General concept
+## Reference
+## Learn
 
 ngl describe everything as a **data**.
 A data is an information which exist somewhere. It can be a physical object, a mechanism, an abstract idea etc ...

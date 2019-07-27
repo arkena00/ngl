@@ -147,8 +147,8 @@ matrix<data_type ngl::float, rows 4, columns 4> float_matrix4x4;
 
 ---------------------------------------
 [alias]: #alias
-[ngl:data]: /doc/reference/language/data
-[ngl:entity]: /doc/reference/language/entity
+[ngl:data]: /doc/reference/ngl/data
+[ngl:entity]: /doc/reference/ngl/entity
 
 [description]: #description
 [scalar_description]: #scalar_description

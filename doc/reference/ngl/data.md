@@ -1,8 +1,9 @@
 # ngl:data
 
-> [semantic]
-Represent any information
+__`[description]`__
 
-`[edge<>]`
+A data represent any information
+
+__`[edge]`__
 - [ngl:concept](/data/concept.md)
 - [ngl:concrete](/data/concrete.md)
