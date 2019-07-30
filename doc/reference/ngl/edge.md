@@ -1,13 +1,18 @@
 # ngl:edge
 
-: edge
+__`[description]`__
+
+An edge is a link between two identifiers
+
+__`[syntax]`__
+> : edge
 :: auto edge
 :<edge_name>: parametric edge
 . edge of type has
 
 ngc page
 {
-    ngc:string name
+    ngc:string name // edge<has, page, name>
 }
 
 
@@ -18,31 +23,11 @@ source:<is>target // parametric edge
 
 source:<is>:target
 
-ngc:page web
+__`[example]`__
+
+ngl:concept page
 {
-    // web context // create context
-    // ^. access ngc:page context
-    .ngc:* // import all concepts from ngc:page
-    // 
-    
-    ^.name
-    
-    :<is>:ngc:page
-    
-    web_page :is: page
-    
-    ngl:edge<is, ngc:page>
-    ngc:url url
+    nge<is>
 }
 
-ngc:page web
-{
-    :<is>page // create edge of type is between page:web and page
-    
-    ngc:url url
-}
-// alias web_page
-
-page-<is>-ngc:page:web
-
-ngc:page:web :<is>: ^page
+A-<has>-B-<is>-C-<edge1 && edge2>-D

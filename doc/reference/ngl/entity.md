@@ -1,6 +1,7 @@
 # ngl:entity
 
-A logical ngl:data who has concepts and can make ngl:execution:*
+An entity is a logical [ngl:data] who has concepts and can make ngl:execution:*
+It can interact with its environment.
 
 entity
 {

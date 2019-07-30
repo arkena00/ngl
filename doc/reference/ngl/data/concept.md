@@ -3,4 +3,5 @@
 __`[path]`__ ngl:data:concept
 
 __`[description]`__
-A concept is an abstract data owning by the logic entity (the source code of the program)
+
+A concept is a [ngl:data](../data.md) owned and described by a [ngl:entity](../entity.md)
