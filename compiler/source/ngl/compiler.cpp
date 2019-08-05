@@ -3,23 +3,35 @@
 #include <fstream>
 #include <iostream>
 
+#include <nds/encoder/graph.hpp>
 #include <ngl/cluster.hpp>
 #include <ngl/lang.hpp>
+
+#include <spdlog/spdlog.h>
 
 namespace ngl
 {
     compiler::compiler()
+         : flags_{}
     {
-        ngl::lang::identifier ngl{ "ngl" };
-        ngl::lang::identifier alias{ "alias" };
-        ngl::lang::identifier concept{ "concept" };
+        spdlog::set_level(spdlog::level::info);
 
         process("ngl.ngl");
     }
 
     void compiler::add_flag(compiler::flags flag)
     {
-        flags_ = static_cast<compiler::flags>((uint32_t)flags_ | (uint32_t)flag);
+        flags_.set(static_cast<unsigned int>(flag));
+    }
+
+    void compiler::set_flags(unsigned int flags)
+    {
+        flags_ = flags;
+    }
+
+    bool compiler::has_flag(compiler::flags flag)
+    {
+        return flags_.test(static_cast<unsigned int>(flag));
     }
 
     void compiler::add_param(compiler::params param, std::string value)
@@ -31,16 +43,26 @@ namespace ngl
     {
         using namespace std::string_literals;
 
+        // pre flags
+        if (has_flag(flags::trace)) spdlog::set_level(spdlog::level::trace);
+
         file_path_ = std::move(file_path);
         std::ifstream file { file_path_ };
         if (!file)
         {
-            std::cerr << "File not found : \"" + file_path_ + "\"";
+            std::cerr << "File not found : \"" + file_path_ + "\"\n";
             return;
         }
 
         std::string file_data { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
 
-        ngl::cluster cluster{ std::move(file_data) };
+        ngl::cluster cluster{ file_path_, std::move(file_data) };
+
+        // post flags
+        if (has_flag(flags::graph))
+        {
+            std::cout << "\n\nGraph\n";
+            nds::encoders::dot<>::encode<nds::console>(cluster.graph());
+        }
     }
 } // ngl

@@ -1,6 +1,7 @@
 #include <ngl/cli.hpp>
 #include <ngl/compiler.hpp>
 
+#include <iostream>
 #include <llvm/Support/CommandLine.h>
 
 namespace ngl
@@ -14,14 +15,23 @@ namespace ngl
 
         cl::SetVersionPrinter([](raw_ostream& os){ os << "ngl compiler 0.1"; });
         cl::opt<std::string> OutputFilename("o", cl::desc("Specify output filename"), cl::value_desc("filename"));
-        cl::opt<bool> flag_debug("d", cl::desc("debug mode"));
 
         cl::opt<std::string> input_filename(cl::Positional, cl::Required, cl::desc("<input file>"));
+
+        // flags
+        cl::bits<ngl::compiler::flags> compiler_flags( cl::desc("Compiler flags"),
+            cl::values
+            (
+                cl::OptionEnumValue{ "d", int(ngl::compiler::flags::debug), "Debug" }
+                , cl::OptionEnumValue{ "t", int(ngl::compiler::flags::trace), "Trace" }
+                , cl::OptionEnumValue{ "g", int(ngl::compiler::flags::graph), "Show program graph" }
+            )
+        );
 
         // parse cl
         cl::ParseCommandLineOptions(argc, argv);
 
-        if (flag_debug) nglc_.add_flag(ngl::compiler::flags::debug);
+        nglc_.set_flags(compiler_flags.getBits());
 
         nglc_.process(input_filename);
 
