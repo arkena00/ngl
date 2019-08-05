@@ -1,5 +1,7 @@
 #include <ngl/cluster.hpp>
 
+#include <ngl/log.hpp>
+
 #include <nds/encoder/graph.hpp>
 #include <ngl/ast/listener.hpp>
 
@@ -17,21 +19,25 @@
 
 namespace ngl
 {
-    cluster::cluster(std::string source)
-        : source_{ std::move(source) }
+    cluster::cluster(std::string name, std::string source)
+        : name_{ std::move(name) }
+        , source_{ std::move(source) }
         , lexer_{ source_ }
         , parser_{ lexer_ }
     {
+        ngl_trace("make cluster {}", name_);
         ngl::ast_listener listener{ *this };
         ngl::traverse(ast(), listener);
-
-        std::cout << "\n\n";
-        nds::encoders::dot<>::encode<nds::console>(graph_);
     }
 
     ngl::ast* cluster::ast()
     {
         return parser_.ast();
+    }
+
+    ngl::graph& cluster::graph()
+    {
+        return graph_;
     }
 
     void cluster::build()
