@@ -46,6 +46,10 @@ target_compile_definitions(lib_antlr_object PUBLIC -DANTLR4CPP_STATIC)
 # lib_nds
 add_subdirectory(third_party/nds)
 
+# lib_speedlog
+add_library(lib_speedlog INTERFACE)
+target_include_directories(lib_speedlog INTERFACE "third_party/spdlog/include")
+
 #-------------------------------------------------------
 #                         nglc
 #-------------------------------------------------------
@@ -60,6 +64,7 @@ target_include_directories(lib_nglc_object PUBLIC include source/gen)
 target_link_libraries(lib_nglc_object
         lib_llvm
         lib_nds
+        lib_speedlog
         lib_antlr_object $<TARGET_OBJECTS:lib_antlr_object>)
 
 
