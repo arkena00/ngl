@@ -17,7 +17,7 @@ ngl:environment computer
         ngl:data word_size
     }
 
-    ngl:storage_space
+    ngl:concrete_storage
     {
         ngl:data hdd
         ngl:data ram

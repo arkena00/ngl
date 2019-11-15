@@ -18,8 +18,8 @@ Ex:
 ```
 ngl::function add
 {
-    ngc::int a
-    ngc::int b
+    ngc::number a
+    ngc::number b
     
     ngc::int result
 }
