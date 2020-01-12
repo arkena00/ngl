@@ -3,7 +3,6 @@ struct Matrix<T: Copy + Display> {
         rows: usize,
         columns: usize,
         data: Vec<T>,
-
 }
 
 impl<T: Copy + Display> Matrix<T> {

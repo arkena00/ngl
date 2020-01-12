@@ -8,8 +8,8 @@ ngl project
 
 ngl:project zeta
 {
-    :name = "project_zeta";
-    :storage:filesystem
+    .name = "project_zeta";
+    .storage:filesystem
 
     ngl:program program
     {
@@ -17,10 +17,10 @@ ngl:project zeta
     }
 }
 
-ngl:entity program
+ngl:program
 {
     ngc::name;
     ngc::entry_point;
 
-    :environment:windows
+    .environment:windows
 }

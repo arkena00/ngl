@@ -35,6 +35,19 @@ ngl:main
     }
 }
 
+ngl:program main
+{
+    ngc:int a
+    ngc:int b
+    ngc:int tmp
 
+    ngl:loop
+    {
+        tmp = a + b
+        a = b
+        b = tmp
+        ngl:print<b>
+    }
+}
 
 ```

@@ -5,16 +5,14 @@ ngc matrix
     ngc:size rows
     ngc:size columns
     ngl::concept:size // use size as identifier
-    
-    nge:context ngl:concept:math // use matrix as edge source 
 }
 
 ngc:matrix matrix4x4
 {
-    ngc:usize .ngc:size
+    ngc:usize ^.size
     
-    .rows ngc:number
-    .columns ngc:number
+    ^.rows ngc:number
+    ^.columns ngc:number
    
 
     .rows 4

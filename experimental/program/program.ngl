@@ -1,3 +1,5 @@
+program_state : compilation, running
+
 ngc::project zeta
 {
     ngc:folder{ .root = "c:/" }
