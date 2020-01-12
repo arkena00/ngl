@@ -1,25 +1,43 @@
 # Neuroshok Generic Language
 
-## General concept
-## Reference
-## Learn
+## Introduction
 
-ngl describe everything as a **data**.
-A data is an information which exist somewhere. It can be a physical object, a mechanism, an abstract idea etc ...
-A data can be connected to another using a logical link (a specific data)
+To write a program, we need to describe things. \
+ngl will describe everything as **ngl:data**
 
-A concept is a data logically described by an entity (a concrete object is not a concept) \
-An identifier is a data created by the descriptor to describe a logic
+To be able to describe things, we need a **ngl:data** able to process logic : an **ngl:entity** \
+ngl is an entity who describe things.
 
-An axiom is an atomic concept
-A concept add a logic to a data
+To exist, those things need to have a **physical** support somewhere : in a **ngl:storage**
 
-data // information
-    concepts // abstract information (immaterial)
-    concretes // material (exist in the entity environment)
+To act or interact, we need physical or logical rules for each thing : using **ngl:rule** 
 
+The programmer will write how the ngl entity will work (the compiler)
+and how it will work (programs, metaprograms etc ...)
 
+### Architecture   
+- **Data**
+    - Physical
+        - Constant : an immutable data
+        - Mutable : a mutable data
+    - Logical
+        - Entity : a data able to process logic
+    
+    - ? Specific
+        - logical_constant : a mutable data following a specific logic but not mutable by an external entity
+        - logical_mutable : a mutable data following a specific logic, it can be immutable for some entities
 
+- **Rule** : describe an internal logic or external interactions
+      
+- **Storage** : store *data* with logic (rules)
+    - Environment : a storage containing all the *data* from an entity perspective
+    
+- **Edges** : create interactions between *data*
 
+- **Concept** : a concept is a ngl:data described by an entity stored in the entity storage
 
-Data can have many interpretations defined by a process
+## Resources
+
+[Learn](learn/1.getting started.md)
+
+[Language reference](reference/index.md)
