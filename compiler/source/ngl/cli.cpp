@@ -25,6 +25,7 @@ namespace ngl
                 cl::OptionEnumValue{ "d", int(ngl::compiler::flags::debug), "Debug" }
                 , cl::OptionEnumValue{ "t", int(ngl::compiler::flags::trace), "Trace" }
                 , cl::OptionEnumValue{ "g", int(ngl::compiler::flags::graph), "Show program graph" }
+                , cl::OptionEnumValue{ "nongl", int(ngl::compiler::flags::nongl), "Do not process ngl.ngl" }
             )
         );
 
@@ -33,6 +34,7 @@ namespace ngl
 
         nglc_.set_flags(compiler_flags.getBits());
 
+        nglc_.init();
         nglc_.process(input_filename);
 
         // post process

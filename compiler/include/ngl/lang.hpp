@@ -5,21 +5,55 @@
 #include <ngl/parser.hpp>
 #include <ngl/lexer.hpp>
 
+#include <optional>
 #include <string>
+#include <vector>
 
 namespace ngl::lang
 {
+    struct scalar_identifier
+    {
+        using ast_node_type = antlr4::nglParser::Scalar_identifierContext;
+
+        scalar_identifier(ast_node_type* ast_node);
+
+        std::string name;
+        std::optional<std::string> parameter;
+    };
+
     class identifier
     {
-    public:
-        identifier(std::string name) : name_{ std::move(name) } {}
+        using ast_node_type = antlr4::nglParser::IdentifierContext;
 
-        const std::string& name() const { return name_; }
+    public:
+        identifier(ast_node_type* ast_node)
+        {
+            if (ast_node->RAW_IDENTIFIER()) name_ = ast_node->RAW_IDENTIFIER()->getText();
+
+            if (ast_node->path_identifier())
+            {
+                for (antlr4::nglParser::Scalar_identifierContext* scalar_id : ast_node->path_identifier()->scalar_identifier())
+                {
+                    parameters_->push_back( lang::scalar_identifier{ scalar_id } );
+                    std::cout << "\ncheck " << parameters_->back().name;
+                }
+                name_ = parameters_->back().name;
+            }
+        }
+
+        // is_scalar path
+
+        const std::string& name() const
+        {
+            return name_;
+        }
 
     private:
         std::string name_;
+        std::optional<std::vector<lang::scalar_identifier>> parameters_;
     };
 
+    /*
     class identifier_descriptor
     {
         using ast_node_type = antlr4::nglParser::Identifier_descriptorContext;
@@ -29,17 +63,18 @@ namespace ngl::lang
         {
             if (ast_node->identifier_path())
             {
-                std::cout << "\n__path" << ast_node->identifier_path()->getText();
+                //std::cout << "\n__path" << ast_node->identifier_path()->getText();
             }
-            else if (ast_node->IDENTIFIER())
+            else if (ast_node->identifier_path())
             {
                 //unit_.alias.get("concept")
-                std::cout << "\n__" << ast_node->IDENTIFIER()->getText();
+                //std::cout << "\n__" << ast_node->IDENTIFIER()->getText();
             }
 
             // alias or identifier_path
         }
     };
+
 
     class identifier_path
     {
@@ -49,31 +84,31 @@ namespace ngl::lang
         {
             std::vector<antlr4::tree::TerminalNode*> identifiers;
 
-            std::cout << ast_node->getText();
-/*
-            for (antlr4::tree::TerminalNode* item : ast_node->IDENTIFIER())
+            if (ast_node)
             {
-                identifiers_.push_back(item->getText());
-                std::cout << "\nID : " << item->getText();
-            }
-            if (identifiers_.size() > 0) std::cout << "error";
-
-            for (auto i = 0; i != identifiers_.size() - 1; ++i)
-            {
-                auto edge_type = ast_node->identifier_edge(i)->getStart()->getType();
-                std::cout << "\nsource: " << identifiers_[i] << " target: " << identifiers_[i + 1] << " " << edge_type;
-                if (edge_type == ngl::tokens::DOUBLE_COLON)
+                for (antlr4::tree::TerminalNode* item : ast_node->IDENTIFIER())
                 {
-                    std::cout << " _deduction required";
-                    // search from source until target
+                    identifiers_.push_back(item->getText());
+                }
+
+                for (auto i = 0; i != identifiers_.size() - 1; ++i)
+                {
+                    auto edge_type = ast_node->identifier_edge(i)->getStart()->getType();
+                    std::cout << "\nsource: " << identifiers_[i] << " target: " << identifiers_[i + 1] << " " << edge_type;
+                    if (edge_type == ngl::tokens::DOUBLE_COLON)
+                    {
+                        std::cout << " _deduction required";
+                        // search from source until target
+                    }
+                }
+
+                ngl_assert(identifiers_.size() > 0);
+                name_ = identifiers_[0];
+                for (auto i = 1; i < identifiers_.size(); ++i)
+                {
+                    name_ +=  ":" + identifiers_[i];
                 }
             }
-
-            name_ = ":" + identifiers_[0];
-            for (auto i = 1; i < identifiers_.size(); ++i)
-            {
-                name_ +=  ":" + identifiers_[i];
-            }*/
         }
 
         const std::string& name() const { return name_; }
@@ -85,6 +120,7 @@ namespace ngl::lang
         std::string name_;
         std::vector<std::string> identifiers_;
     };
+     */
 } // ngl
 
 #endif // COMPILER_INCLUDE_NGL_LANG_HPP_NGL

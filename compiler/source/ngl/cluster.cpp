@@ -24,10 +24,15 @@ namespace ngl
         , source_{ std::move(source) }
         , lexer_{ source_ }
         , parser_{ lexer_ }
+        , root_{ nullptr }
     {
-        ngl_trace("make cluster {}", name_);
+        root_ = graph_.add(name_);
+        node_ = root_;
+
+        ngl_info("Process cluster {}", name_);
         ngl::ast_listener listener{ *this };
         ngl::traverse(ast(), listener);
+
     }
 
     ngl::ast* cluster::ast()
@@ -40,8 +45,9 @@ namespace ngl
         return graph_;
     }
 
-    void cluster::build()
+    void cluster::process(ngl::lang::identifier& id)
     {
+        /*
         using namespace llvm;
 
         LLVMContext Context;
@@ -52,7 +58,22 @@ namespace ngl
 
         std::vector<Type*> PutCharArgs = { Type::getInt32Ty(Context) };
         FunctionType* PutCharType = FunctionType::get(Type::getInt32Ty(Context), PutCharArgs, false);
-        Function::Create(PutCharType, Function::ExternalLinkage, "putchar", M);
+        Function::Create(PutCharType, Function::ExternalLinkage, "putchar", M);*/
+    }
+
+    nds::node<std::string>* cluster::root()
+    {
+        return root_;
+    }
+
+    void cluster::set_node(nds::node<std::string>* node)
+    {
+        node_ = node;
+    }
+
+    nds::node<std::string>* cluster::node()
+    {
+        return node_;
     }
 
 } // namespace ngl

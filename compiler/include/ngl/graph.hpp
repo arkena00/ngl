@@ -7,9 +7,7 @@
 
 namespace ngl
 {
-    namespace lang { class identifier; }
-
-    using graph = nds::graph<ngl::lang::identifier>;
+    using graph = nds::graph<std::string>;
 } // ngl
 
 #endif // COMPILER_INCLUDE_NGL_GRAPH_HPP_NGL

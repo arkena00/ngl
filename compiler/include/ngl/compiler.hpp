@@ -1,6 +1,7 @@
 #ifndef COMPILER_INCLUDE_NGL_COMPILER_HPP_NGL
 #define COMPILER_INCLUDE_NGL_COMPILER_HPP_NGL
 
+#include <ngl/concretizer.hpp>
 #include <ngl/graph.hpp>
 
 #include <llvm/Support/CommandLine.h>
@@ -14,10 +15,12 @@ namespace ngl
     class compiler
     {
     public:
-        enum class flags { none = 0, debug, trace, graph };
+        enum class flags { none = 0, debug, graph, nongl, trace };
         enum class params { output };
 
         compiler();
+
+        void init();
 
         void add_flag(flags);
         void set_flags(unsigned int);
@@ -33,6 +36,8 @@ namespace ngl
         std::string file_path_;
         std::bitset<64> flags_;
         std::unordered_map<params, std::string> params_;
+
+        std::unique_ptr<ngl::concretizer> concretizer_;
     };
 } // ngl
 

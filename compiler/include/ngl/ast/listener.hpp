@@ -21,7 +21,9 @@ namespace ngl
 
     private:
         void enterStatement(antlr4::nglParser::StatementContext * ctx) override;
-        void enterExpression_description(antlr4::nglParser::Expression_descriptionContext * ctx) override;
+        void enterDescription(antlr4::nglParser::DescriptionContext * ctx) override;
+        void enterScalar_description(antlr4::nglParser::Scalar_descriptionContext * ctx) override;
+        void enterVector_description(antlr4::nglParser::Vector_descriptionContext * ctx) override;
 
         ngl::cluster& cluster_;
     };

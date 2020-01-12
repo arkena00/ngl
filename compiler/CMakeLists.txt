@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(nglc)
 
-set(LLVM_PATH c:/lib/llvm8/install)
+set(LLVM_PATH D:/dev/lib/llvm-9.0.0)
 
 # disable libs warning
 add_compile_options(/wd4267 /wd4244 /wd4996)
@@ -24,7 +24,7 @@ target_include_directories(lib_llvm INTERFACE ${LLVM_INCLUDE_DIRS})
 target_compile_definitions(lib_llvm INTERFACE ${LLVM_DEFINITIONS})
 target_link_directories(lib_llvm INTERFACE ${LLVM_PATH}/lib)
 llvm_map_components_to_libnames(llvm_libs
-        x86asmparser x86asmprinter x86codegen x86desc x86disassembler x86info x86utils
+        x86asmparser x86codegen x86desc x86disassembler x86info x86utils
         codegen core native nativecodegen)
 target_link_libraries(lib_llvm INTERFACE ${llvm_libs})
 

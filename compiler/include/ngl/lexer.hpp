@@ -16,7 +16,9 @@ namespace ngl
         lexer(const std::string& data)
             : antlr_input_{ data }
             , antlr_lexer_{ &antlr_input_ }
-        {}
+        {
+            //antlr_lexer_.removeErrorListeners();
+        }
 
         antlr4::nglLexer& antlr_lexer() { return antlr_lexer_; }
 

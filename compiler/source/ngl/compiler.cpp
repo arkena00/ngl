@@ -8,15 +8,31 @@
 #include <ngl/lang.hpp>
 
 #include <spdlog/spdlog.h>
+#include <ngl/log.hpp>
+
+namespace nds::encoders
+{
+    template<> template<>
+    std::string dot<>::node_name<std::string>(const std::string& v)
+    {
+        return v;
+    }
+}
 
 namespace ngl
 {
     compiler::compiler()
          : flags_{}
+         , concretizer_{ std::make_unique<ngl::llvm_concretizer>() }
     {
         spdlog::set_level(spdlog::level::info);
+    }
 
-        process("ngl.ngl");
+    void compiler::init()
+    {
+        if (!has_flag(flags::nongl)) process("ngl.ngl");
+
+        concretizer_ = std::make_unique<ngl::llvm_concretizer>();
     }
 
     void compiler::add_flag(compiler::flags flag)
@@ -27,6 +43,8 @@ namespace ngl
     void compiler::set_flags(unsigned int flags)
     {
         flags_ = flags;
+
+        if (has_flag(flags::trace)) spdlog::set_level(spdlog::level::trace);
     }
 
     bool compiler::has_flag(compiler::flags flag)
@@ -42,9 +60,7 @@ namespace ngl
     void compiler::process(std::string file_path)
     {
         using namespace std::string_literals;
-
-        // pre flags
-        if (has_flag(flags::trace)) spdlog::set_level(spdlog::level::trace);
+        ngl_trace("compiler process {}", file_path);
 
         file_path_ = std::move(file_path);
         std::ifstream file { file_path_ };
@@ -56,13 +72,18 @@ namespace ngl
 
         std::string file_data { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
 
-        ngl::cluster cluster{ file_path_, std::move(file_data) };
-
-        // post flags
-        if (has_flag(flags::graph))
+        try
         {
-            std::cout << "\n\nGraph\n";
-            nds::encoders::dot<>::encode<nds::console>(cluster.graph());
+            ngl::cluster cluster{ file_path_, std::move(file_data) };
+            //concretizer_.process(cluster);
+
+            // post flags
+            if (has_flag(flags::graph))
+            {
+                std::cout << "\n\nGraph\n";
+                nds::encoders::dot<>::encode<nds::console>(cluster.graph());
+            }
         }
+        catch(...) { ngl_error("parser error"); }
     }
 } // ngl
