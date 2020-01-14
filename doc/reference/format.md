@@ -1,9 +1,9 @@
-# ngl:element
+# ngl:data
 __`[description]`__
 
-Description of ngl:element
+Description of ngl:data
 
-__`[path]`__ [ngl:full:path:to:element](#path)
+__`[path]`__ [ngl:full:path:to:data](#path)
 
 __`[edge]`__
 
