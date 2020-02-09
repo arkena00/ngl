@@ -7,8 +7,8 @@ A data represent any information (A space, a concept, a concrete data, a logical
 __`[edge]`__
 - [ngl:concept](data/concept.md)
 - [ngl:concrete](data/concrete.md)
-- [ngl:identifier](../identifier.md)
-- [ngl:shape](../shape.md)
+- [ngl:identifier](identifier.md)
+- [ngl:shape](shape.md)
 
 __`[syntax]`__
 

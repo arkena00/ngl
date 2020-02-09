@@ -1,27 +1,28 @@
 # reference
 
 - ngl
-    - [data](ngl/data.md)
-        - [concept](ngl/data/concept.md)
-        - [concrete](ngl/data/concrete.md)
+    - lang
+        - [identifier](ngl/lang/identifier.md)
+        - [description](ngl/lang/description.md) 
+        
+    - concept (intrinsic)
+        - [data](ngl/data.md)
+            - [concept](ngl/data/concept.md)
+            - [concrete](ngl/data/concrete.md)
 
-    - [environment]
+        - [environment](ngl/environment.md)
+        - [edge](ngl/edge.md)
+        - [meta](ngl/meta.md)
+        - [rule](ngl/rule.md)
+        - [shape](ngl/shape.md)
+    
+        - execution
+            - [branch](ngl/execution/branch.md)
+            - [function](ngl/execution/function.md)
+            - [instruction](ngl/execution/instruction.md)
+            - [loop](ngl/execution/loop.md)
 
-    - [edge](ngl/edge.md)
-
-    - [identifier](ngl/identifier.md)
-
-    - [meta](ngl/meta.md)
-
-    - [rule](ngl/rule.md)
-
-    - execution
-        - [branch](ngl/execution/branch.md)
-        - [function](ngl/execution/function.md)
-        - [instruction](ngl/execution/instruction.md)
-        - [loop](ngl/execution/loop.md)
-
-    - concept *ngl concept library*
-        - [container](ngl/concept/container.md)
-        - [math](ngl/concept/math.md)
-        - [project](ngl/concept/project.md)
+- ngl concept library
+    - [container](ngl/concept/container.md)
+    - [math](ngl/concept/math.md)
+    - [project](ngl/concept/project.md)

@@ -10,6 +10,11 @@ __`[syntax]`__
 :<edge_name>: parametric edge
 . edge of type has
 
+edge types
+- is
+- has
+
+
 ngc page
 {
     ngc:string name // edge<has, page, name>
