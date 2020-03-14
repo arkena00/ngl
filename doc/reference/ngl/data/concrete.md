@@ -7,15 +7,19 @@ __`[description]`__
 A concrete is a [ngl:data](../data.md) representing the concretization of a [ngl:concept](../concept.md)
 in the [ngl:entity] storage space.
 
+__`[edge]`__
+
+- [ngl:storage](../storage.md)
 
 ``` 
 ngl concrete
 {
     ngl:concept <concept>
-    ngl:access <access> // access = read | write
+    ngl:storage <storage>
 }
 
-ngl:concrete<ngc:string, read> test { hello world }
+ngc:string<"Hello"> concept_string
+ngl:concrete<my_string, ngl:storage:entity> concrete_string
 
 ngl:alias< ngl:concrete<ngc:string, read> > ngr_string
 

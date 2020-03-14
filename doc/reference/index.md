@@ -2,10 +2,12 @@
 
 - ngl
     - lang
+        - [description](ngl/lang/description.md)
         - [identifier](ngl/lang/identifier.md)
-        - [description](ngl/lang/description.md) 
         
     - concept (intrinsic)
+        - [cluster](ngl/cluster.md)
+    
         - [data](ngl/data.md)
             - [concept](ngl/data/concept.md)
             - [concrete](ngl/data/concrete.md)

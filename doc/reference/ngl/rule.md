@@ -1,5 +1,11 @@
 # ngl:rule
 
+__`[description]`__
+
+A rule define the behaviour of a ngl:data
+
+__`[example]`__
+
 ```
 ngl:rule no_zero
 {
