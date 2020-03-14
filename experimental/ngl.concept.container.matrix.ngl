@@ -1,0 +1,34 @@
+ngl:concept:container matrix // data_type unknown, has to be define in current context
+{
+    ngl:concept:number <rows>
+    ngl:concept:number <columns>
+    ngl::concept:size ( rows * columns )
+
+    <data_type> .data // redescription
+}
+
+// meta concept
+ngl meta
+{
+    ngl:concept <concept>
+}
+
+// non-intrusive version
+ngl:meta<ngc:matrix> meta_matrix
+{
+    ngl:branch
+    {
+        ^.size > 8000 (^.storage ngl:storage:dynamic)
+        ^..storage ngl:storage:static // <=> meta.concept.storage ngl:storage:static // concept is deduced
+    }
+}
+
+
+// concrete
+matrix<4, 4, ngl:float> concrete_matrix;
+
+
+ngc:narray
+{
+
+}

@@ -1,0 +1,29 @@
+ngl:function divide
+{
+    ngl:int <x>
+    ngl:int <y>
+
+    ngl:branch<(y == 0)>
+    {
+        .error
+    }
+
+    ngl:rule
+    {
+        y != 0
+    }
+
+    .result (x / y)
+}
+
+ngl:function test
+{
+    ngl:int <x>
+    ngl:int <y>
+
+    tmp = divide<x, y>
+
+    tmp.retry<x, y + 1>
+
+    .result divide<x, y>
+}

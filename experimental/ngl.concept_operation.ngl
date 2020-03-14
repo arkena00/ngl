@@ -1,0 +1,8 @@
+ngc:array<ngl:int> ar
+ngc:dynamic_storage ds
+
+// combine concepts
+(ar & ds) darray
+
+// add concepts
+(ar + ngc:sort)

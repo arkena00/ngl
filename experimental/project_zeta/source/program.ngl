@@ -1,0 +1,13 @@
+ngl cluster
+{
+    ngc::bool export
+
+    ngl:rule
+    {
+        ngl:branch
+        {
+            (export == true) ngl:edge:add
+            () !ngl:edge:add
+        }
+    }
+}

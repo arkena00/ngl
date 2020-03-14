@@ -1,0 +1,60 @@
+ngc:math integer
+{
+    ngl:rule
+    {
+        ngl:in_range<integer, -ngl:infinite, ngl:infinite>
+    }
+}
+
+ngc integer
+{
+    ngc:math:integer <value> = 0
+    ngl:uint <bits> = ngl:env:word_size
+
+    ngl:rule
+    {
+        ngl:in_range<integer, -2^(bits - 1), 2^(bits - 1) - 1>
+    }
+}
+
+ngc:integer int
+ngc:integer<?, 8> char
+
+
+ngc:integer<4> quatre
+
+
+ngl:instruction add
+{
+    ngc:integer <op1>
+    ngc:integer <op2>
+    ngc:integer result
+
+    ngl:rule
+    {
+        op1.bits == op2.bits
+    }
+}
+
+ngl:function
+{
+    ngl:data input
+    ngl:data result
+}
+
+ngc:math add
+{
+    ngc:integer op1
+    ngc:integer op2
+
+    .result = ngl:instruction:add<op1, op2>
+}
+
+ngc:sequence add
+
+ngl:function sum
+{
+    <[args]>
+}
+
+sum<[1 2 3 4]>:add<4>.result

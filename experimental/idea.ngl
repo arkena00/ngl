@@ -1,0 +1,25 @@
+// finalisation
+an object is not considered constant during concretisation, after finalisation, the concretised object respect the constants rules
+
+
+
+ngc cursor_container
+{
+    ngc:array<int>
+    int cursor
+
+    fn next {} // read edge this -> array // write edge this -> cursor
+    fn clear {} // write edge this -> array
+
+    ngl:rule:fn_const_on<next, array>
+
+    ngl:rule
+    {
+        // ngl:const<cursor_container> // merge rules
+        !ngl:edge<ngl, cursor_container.next, array, write>
+    }
+}
+
+ngl:const<cursor_container> const_container
+const_container.clear // fail
+const_container.next // ok
