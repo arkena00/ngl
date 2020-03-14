@@ -1,0 +1,94 @@
+ngl data
+{
+    ngl:storage <storage>
+}
+
+ngl:data concept
+{
+    ngl:storage
+}
+
+ngl::concept container
+{
+    .storage ngl:storage:heap
+    <ngl:data> data_type // data to store
+}
+
+ngc array
+{
+    <element>
+    ngc::size <size>
+}
+ngc:array<ngc::int, 20> test = [1 2 3 4]
+ngc:array<ngc::int | ngc::bool, 20> test = [1 true 3 false]
+
+ngc narray
+{
+    <ngl:data> element_type
+    ngl:array<ngl:uint, dimensions.size> <dimensions>
+
+    ngl:concrete<ngc::size, ngl:storage:compiler> size = (ngc::multiplicate<dimensions>)
+    ngc:array<element_type, size> elements
+
+    ngl:function get
+    {
+        ngl:meta<dimensions>.descriptor <indexes>
+        .result elements.get<[ (idx_calc) ]>
+    }
+}
+
+ngl:rule<ngc:narray>
+{
+    ngc:array:range_check<.concept.get.indexes, .concept.dimensions>
+}
+
+ngl:meta<ngc:array, ngl:phase:compilation>
+{
+    ngl:branch
+    {
+        (^.size > 8000) ^.concept & ngl:storage:dynamic
+        () ^.storage & ngl:storage:static
+    }
+}
+
+ngc::narray<float, [2 2 2]> arr
+ngl:concrete<arr>
+{
+    [ [1 2] [3 4] ]
+    [ [5 6] [7 8] ]
+}
+arr.get<[0 0 0]>.result
+
+
+// ngl:literal
+ngl:infinity n
+[0 1 2 3]
+[0 2 .. 7 9 .. n]
+
+ngc:math
+{
+    [ngc:real; -n .. n] R
+    [ngc:real; -n .. -1 1 .. n] R*
+    [ngc:real; 0 .. n] R+
+}
+
+
+ngc:math:function divide
+{
+    .classification R*
+}
+
+ngl:concrete<divide>
+{
+    .result = ngl:instruction:divide<.a, .b>
+}
+
+ngc:math:foreach<n>:in<R>:
+
+ngl:math:function<[x y z]> zeta = (x * 2 + y)
+[ zeta ]
+
+[ngl:int | ngl:float] arr = [0 2.5 4.0 5]:foreach:add:mul<2>
+
+"127.0.0.1":sequence:
+[127 0 0 1]

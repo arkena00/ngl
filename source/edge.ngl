@@ -1,0 +1,9 @@
+ngl edge
+{
+    ngl:entity <origin>
+    ngl:data <source>
+    ngl:data <target>
+    ngl:edge <edge_type>
+}
+
+

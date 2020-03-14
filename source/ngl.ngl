@@ -1,12 +1,12 @@
 // self descriptor (ngl entity describe its concepts)
 ngl ngl
 {
-    environment;
+    environment
 
-    storage;
-    data;
-    entity;
-    concept;
+    storage
+    data
+    entity
+    concept
 }
 
 
