@@ -20,6 +20,24 @@ ngc integer
 ngc:integer int
 ngc:integer<?, 8> char
 
+ngc:math:sum
+{
+    ngc:number a
+    ngc:number b
+    ngc:number result
+}
+
+ngc:sum
+{
+    ngc:integer<32> a
+    ngc:integer<32> b
+    ngc:integer<32> result
+}
+
+ngl:shape<ngc:math:sum> == ngl:shape<ngc:sum>
+
+
+
 
 ngc:integer<4> quatre
 
@@ -42,7 +60,7 @@ ngl:function
     ngl:data result
 }
 
-ngc:math add
+ngc:math:add add
 {
     ngc:integer op1
     ngc:integer op2

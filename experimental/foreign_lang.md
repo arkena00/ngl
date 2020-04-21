@@ -60,7 +60,7 @@ ngc test
     } 
 }
 
-ngl:format:html zeta_form
+ngl:shape:html zeta_form
 <form>
     <p>test</p>
     <input text = "$ ngc:string <value> $" />
