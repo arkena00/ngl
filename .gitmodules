@@ -1,3 +1,9 @@
 [submodule "compiler/third_party/nds"]
 	path = compiler/third_party/nds
 	url = https://github.com/ads00/nds.git
+[submodule "compiler/third_party/spdlog"]
+	path = compiler/third_party/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "compiler/third_party/benchmark"]
+	path = compiler/third_party/benchmark
+	url = https://github.com/google/benchmark.git
