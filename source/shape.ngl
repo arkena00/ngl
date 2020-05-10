@@ -1,0 +1,16 @@
+ngl:shape digit
+{
+    digit == 0
+    digit == 1
+}
+
+ngl:shape number
+{
+    number == digit
+}
+
+
+ngl:shape identifier
+{
+    identifier == letter
+}

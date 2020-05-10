@@ -35,7 +35,7 @@ namespace ngl
         nglc_.set_flags(compiler_flags.getBits());
 
         nglc_.init();
-        nglc_.process(input_filename);
+        nglc_.process(input_filename.c_str());
 
         // post process
 

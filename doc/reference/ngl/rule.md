@@ -56,9 +56,6 @@ ngl:function divide
     ngl:rule
     {
         y != 0
-        divide.result != ngl:infinite
-        .allow { ngl::parameterization<[x, y]> }
-        .deny { ngl::redescription<x> }
     }
 
     .result (x / y)

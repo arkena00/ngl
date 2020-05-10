@@ -14,20 +14,25 @@ add_custom_target(third_party_benchmark
         COMMENT "Building benchmark"
         )
 
+# asm
+enable_language(ASM_NASM)
 
-function(bench_make target_file)
-    set(targetname bench_${target_file})
+set(CMAKE_ASM_NASM_OBJECT_FORMAT win64)
+set(CMAKE_ASM_NASM_COMPILE_OBJECT
+        "<CMAKE_ASM_NASM_COMPILER> <INCLUDES> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
 
-    add_executable(${targetname} ${target_file}.cpp)
-    target_include_directories(${targetname} PRIVATE ${NGLC_THIRD_PARTY_ROOT}/benchmark/include)
-    target_link_libraries(${targetname} lib_nglc)
-    target_link_libraries(${targetname} "${NGLC_THIRD_PARTY_ROOT}/benchmark/lib/benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}" shlwapi)
-    add_dependencies(${targetname} lib_nglc)
-    add_dependencies(${targetname} third_party_benchmark)
-    set_target_properties(${targetname} PROPERTIES
+set(CMAKE_ASM_NASM_FLAGS "${ASM_NASM_FLAGS}")
+
+function(bench_target target)
+    target_include_directories(${target} PRIVATE ${NGLC_THIRD_PARTY_ROOT}/benchmark/include)
+    target_link_libraries(${target} lib_nglc)
+    target_link_libraries(${target} "${NGLC_THIRD_PARTY_ROOT}/benchmark/lib/benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}" shlwapi)
+    add_dependencies(${target} lib_nglc)
+    add_dependencies(${target} third_party_benchmark)
+    set_target_properties(${target} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${NGLC_BIN_ROOT}/benchmark
-            OUTPUT_NAME ${target_file})
-
+            OUTPUT_NAME ${target})
 endfunction()
 
-bench_make(lexer)
+add_executable(bench_lexer lexer.cpp test.asm)
+bench_target(bench_lexer)

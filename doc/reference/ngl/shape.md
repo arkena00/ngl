@@ -4,14 +4,17 @@ __`[description]`__
 
 A ngl:shape describes the shape of ngl:data
 
+concrete shape : literals
+concept shape : data structure
 __`[example]`__
+
 
 ```
 ngl:element digit
 {
-    ngl:rule
+    ngl:shape
     {
-        element == (0 | 1 .. | 9)
+        element == [0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9]
     }
 }
 
@@ -133,5 +136,19 @@ ngl:format log_format
 
 log{{ temps : <time> [ <level> ] | message : <message> }}
 
+
+
+
+ngl:shape brainfuck
+{
+    .delimiter [ $ ]
+    .incrustation [ $ ]
+    .element [ < > + - . , [ ] ]
+}
+
+ngl:shape:brainfuck hello_world
+{
+    +[-->-[>>+>-----<<]<--<---]>-.>>>+.>>..+++[.>]<<<<.+++.------.<<-.>>>>+.
+}
 
 ```

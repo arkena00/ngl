@@ -13,14 +13,11 @@ namespace ngl
     public:
         cluster(std::string name, std::string source);
 
-        void set_node(nds::node<std::string>*);
+        void process();
 
-        ngl::ast* ast();
         ngl::graph& graph();
-        nds::node<std::string>* root();
-        nds::node<std::string>* node();
-
-        void process(ngl::lang::identifier&);
+        nds::node_ptr<std::string> root();
+        nds::node_ptr<std::string> node();
 
     private:
         std::string name_;
@@ -28,8 +25,8 @@ namespace ngl
         ngl::lexer lexer_;
         ngl::parser parser_;
         ngl::graph graph_;
-        nds::node<std::string>* root_;
-        nds::node<std::string>* node_;
+        nds::node_ptr<std::string> root_;
+        nds::node_ptr<std::string> node_;
     };
 } // ngl
 

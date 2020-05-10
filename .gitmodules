@@ -7,3 +7,6 @@
 [submodule "compiler/third_party/benchmark"]
 	path = compiler/third_party/benchmark
 	url = https://github.com/google/benchmark.git
+[submodule "compiler/third_party/PEGTL"]
+	path = compiler/third_party/PEGTL
+	url = https://github.com/taocpp/PEGTL.git

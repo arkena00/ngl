@@ -25,9 +25,9 @@ ngl:environment computer
 
 ngl:entity:os
 {
-    ngl:entity:storage filesystem
-    ngl:entity:storage stack
-    ngl:entity:storage heap
+    ngl:entity:storage | filesystem
+                       | stack
+                       | heap
 }
 
 

@@ -75,6 +75,7 @@ namespace ngl
         try
         {
             ngl::cluster cluster{ file_path_, std::move(file_data) };
+            cluster.process();
             //concretizer_.process(cluster);
 
             // post flags
