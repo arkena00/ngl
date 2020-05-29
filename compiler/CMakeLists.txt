@@ -9,14 +9,22 @@ set(NGLC_BIN_ROOT ${NGL_ROOT}/compiler/bin)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# disable libs warning
-add_compile_options(/EHsc)
-#add_compile_options(/wd4267 /wd4244 /wd4996 /EHsc)
 
 # compiler options
-#add_library(lib_ccw INTERFACE)
-#jln_init_flags(AUTO_PROFILE off)
-#jln_target_interface(lib_ccw INTERFACE WARNINGS strict SANITIZERS default)
+jln_target_interface(lib_ccw INTERFACE
+        WARNINGS strict
+        EXCEPTIONS on
+        BUILD_TYPE release
+            OPTIMIZATION 3
+        BUILD_TYPE debug
+            DEBUG ON
+            OPTIMIZATION 0
+        )
+
+
+add_compile_definitions(_ITERATOR_DEBUG_LEVEL=0)
+add_compile_options("/MD")
+
 #
 #add_compile_options(
 #        /imsvc${NGLC_ROOT}/third_party/spdlog/include
@@ -51,6 +59,7 @@ add_subdirectory(third_party/nds)
 # lib_speedlog
 add_library(lib_speedlog INTERFACE)
 target_include_directories(lib_speedlog INTERFACE "third_party/spdlog/include")
+target_link_libraries(lib_speedlog INTERFACE lib_ccw)
 
 #-------------------------------------------------------
 #                         nglc
@@ -72,7 +81,7 @@ add_library(lib_nglc INTERFACE)
 target_include_directories(lib_nglc INTERFACE include)
 target_link_libraries(lib_nglc INTERFACE
         lib_nglc_object $<TARGET_OBJECTS:lib_nglc_object>
-        #lib_ccw
+        lib_ccw
         )
 
 
@@ -83,6 +92,11 @@ target_link_libraries(nglc lib_nglc)
 set_target_properties(nglc PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${NGL_ROOT}/bin"
             OUTPUT_NAME nglc)
+
+# common lib
+# pegtl
+add_library(lib_pegtl INTERFACE)
+target_include_directories(lib_pegtl SYSTEM INTERFACE ${NGLC_THIRD_PARTY_ROOT}/PEGTL/include)
 
 # experimental
 add_subdirectory(experimental)
