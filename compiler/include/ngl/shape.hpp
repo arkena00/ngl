@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace ngl
 {
@@ -29,9 +30,16 @@ namespace ngl
         uint64_t vector_id = 0;
     };
 
-    struct shape_range
+    struct shape_element
     {
-        shape_range(uint8_t b, uint8_t e) : data{ static_cast<uint64_t>(b << 8u | e) } {}
+        explicit shape_element(char e) : data{ e } {}
+        char data;
+    };
+
+    struct shape_many
+    {
+        template<class Shape>
+        explicit shape_many(Shape shape) : data{ shape.index } {}
         uint64_t data;
     };
 
@@ -42,16 +50,18 @@ namespace ngl
         uint64_t data;
     };
 
-    struct shape_element
+    struct shape_range
     {
-        explicit shape_element(char e) : data{ e } {}
-        char data;
+        shape_range(uint8_t b, uint8_t e) : data{ static_cast<uint64_t>(b << 8u | e) } {}
+        uint64_t data;
     };
 
-    struct shape_many
+    struct shape_sequence
     {
-        explicit shape_many(uint64_t shape_id) : data{ shape_id } {}
-        uint64_t data;
+        template<class... Shapes>
+        explicit shape_sequence(Shapes&&... shapes) : data{ std::forward<Shapes>(shapes).index... }
+        {}
+        std::vector<uint64_t> data;
     };
 } // ngl
 

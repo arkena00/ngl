@@ -6,64 +6,78 @@
 
 TEST(lexer, scalar_range)
 {
-    LX_TEST("abz089");
+    ngl::shape_cluster shapes;
+    auto letter = shapes.add(ngl::shape_range('a', 'z'));
+    auto digit = shapes.add(ngl::shape_range('0', '9'));
+    shapes.add(ngl::shape_or(letter, digit));
 
-    LX_SHAPE(letter, ngl::shape_range('a', 'z')); // ngl::shape_or(R1, R2, R3)
-    LX_SHAPE(digit, ngl::shape_range('0', '9'));
+    ngl::lexer lx{ shapes };
 
-    LX_EXPECT("a", "b", "z", "0", "8", "9");
+    lx.process("ngl012");
+    LX_EXPECT("n", "g", "l", "0", "1", "2");
 }
 
 TEST(lexer, scalar_element)
 {
-    LX_TEST("z_0");
+    ngl::shape_cluster shapes;
+    auto letter = shapes.add(ngl::shape_element('n'));
+    auto digit = shapes.add(ngl::shape_element('0'));
+    auto underscore = shapes.add(ngl::shape_element('_'));
 
-    LX_SHAPE(letter, ngl::shape_element('z'));
-    LX_SHAPE(underscore, ngl::shape_element('_'));
-    LX_SHAPE(digit, ngl::shape_range('0', '9'));
+    ngl::lexer lx{ shapes };
 
-    LX_EXPECT("z", "_", "0");
+    lx.process("n_0");
+    LX_EXPECT("n", "_", "0");
 }
 
 TEST(lexer, scalar_or)
 {
-    LX_TEST("a_z00");
+    ngl::shape_cluster shapes;
+    auto letter = shapes.add(ngl::shape_range('a', 'z'));
+    auto digit = shapes.add(ngl::shape_range('0', '9'));
+    auto underscore = shapes.add(ngl::shape_element('_'));
+    shapes.add(ngl::shape_or(letter, digit));
 
-    LX_SHAPE(letter, ngl::shape_range('a', 'z'));
-    LX_SHAPE(underscore, ngl::shape_element('_'));
-    LX_SHAPE(digit, ngl::shape_range('0', '9'));
-    LX_SHAPE(or_LU, ngl::shape_or(letter, digit));
+    ngl::lexer lx{ shapes };
 
-    LX_EXPECT("a_z", "00");
+    lx.process("ng0_");
+    LX_EXPECT("n", "g", "0", "_");
 }
 
 
 TEST(lexer, vector_many)
 {
-    //! S1: LETTER+
-    //! S2: DIGIT+
-    LX_TEST("abcd0123");
+    ngl::shape_cluster shapes;
+    auto letter = shapes.add(ngl::shape_range('a', 'z'));
+    auto digit = shapes.add(ngl::shape_range('0', '9'));
+    auto underscore = shapes.add(ngl::shape_element('_'));
+    shapes.add(ngl::shape_many(letter));
+    //shapes.add(ngl::shape_many(digit));
 
-    LX_SHAPE(letter, ngl::shape_range('a', 'z'));
-    LX_SHAPE(digit, ngl::shape_range('0', '9'));
-    LX_SHAPE(many_letter, ngl::shape_many(letter));
-    LX_SHAPE(many_digit, ngl::shape_many(digit));
+    ngl::lexer lx{ shapes };
 
-    auto sh_letter = lx.add_shape_data(ngl::shape_range('a', 'z'));
-    auto sh_digit = lx.add_shape_data(ngl::shape_range('0', '9'));
-    auto sh__ = lx.add_shape_data(ngl::shape_type::scalar_element, '_');
-    auto sh_identifier_symbol = lx.add_shape_data(ngl::shape_type::scalar_or, sh_letter | sh_digit);
-    auto sh_many_identifier_symbol = lx.add_shape_data(ngl::shape_type::vector_many, sh_identifier_symbol);
+    lx.process("ngl00_");
+    //LX_EXPECT("ngl", "00", "_");
+}
 
-    auto sh_many_test = lx.add_shape_data(ngl::shape_type::vector_many, sh__);
+TEST(lexer, vector_sequence)
+{
+    ngl::shape_cluster shapes;
+    auto letter = shapes.add(ngl::shape_range('a', 'z'));
+    auto digit = shapes.add(ngl::shape_range('0', '9'));
+    auto underscore = shapes.add(ngl::shape_element('_'));
+    auto identifier_symbol = shapes.add(ngl::shape_or(letter, underscore));
+    auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol));
+    auto identifier = shapes.add(ngl::shape_sequence(underscore, many_identifier_symbol, underscore));
 
-    lx.process();
+    ngl::lexer lx{ shapes };
 
-    ASSERT_TRUE(lx.shapes().size() == 4);
+    lx.process("9_ngl_9");
+    LX_EXPECT("9", "_ngl_", "9");
 
-    ASSERT_TRUE(lx.shape_view(0) == "ngl");
-    ASSERT_TRUE(lx.shape_view(1) == "___");
-    ASSERT_TRUE(lx.shape_view(2) == "00");
-    ASSERT_TRUE(lx.shape_view(3) == "_");
+    lx.process("_ngl_9");
+    //LX_EXPECT("_ngl_", "9");
 
+    lx.process("_ngl_");
+    LX_EXPECT("_ngl_");
 }

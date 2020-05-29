@@ -4,6 +4,20 @@
 
 #include <tao/pegtl.hpp>
 
+namespace ngl_shapes
+{
+    static ngl::shape_cluster identifier;
+    namespace
+    {
+        static auto letter = identifier.add(ngl::shape_range('a', 'z'));
+        static auto digit = identifier.add(ngl::shape_range('0', '9'));
+        static auto underscore = identifier.add(ngl::shape_element('_'));
+        static auto identifier_symbol = identifier.add(ngl::shape_or(letter, underscore));
+        static auto many_identifier_symbol = identifier.add(ngl::shape_many(identifier_symbol));
+        static auto cluster = identifier.add(ngl::shape_sequence(underscore, many_identifier_symbol, underscore));
+    }
+}
+
 
 void store(const std::string& id, const std::string& input, std::vector<ngl::shape>& output)
 {
@@ -61,17 +75,10 @@ auto lexer = [](benchmark::State& state, const std::string& data)
 
     for (auto _ : state)
     {
-        ngl::lexer lx{ data };
-        auto sh_letter = lx.add_shape_data("sh_letter", ngl::shape_type::scalar_range, uint64_t('a' << 8u | 'z') );
-        auto sh_digit = lx.add_shape_data("sh_digit", ngl::shape_type::scalar_range, uint64_t('0' << 8u | '9'));
-        auto sh__ = lx.add_shape_data("sh__", ngl::shape_type::scalar_element, '_');
-        auto sh_identifier_symbol = lx.add_shape_data("sh_identifier_symbol", ngl::shape_type::scalar_or, sh_letter | sh_digit);
-        auto sh_many_identifier_symbol = lx.add_shape_data("sh_many_identifier_symbol", ngl::shape_type::vector_many, sh_identifier_symbol);
+        ngl::lexer lx{ ngl_shapes::identifier };
 
-        auto sh_identifier = lx.add_shape_data("sh_identifier", ngl::shape_type::vector_sequence, { sh__, sh_many_identifier_symbol, sh__ });
-
-        lx.process();
-        output_size = lx.shapes_.size();
+        lx.process(data);
+        output_size = lx.shapes().size();
     }
     state.counters["code_size"] = data.size();
     state.counters["output_size"] = output_size;
@@ -85,7 +92,7 @@ auto lexer2 = [](benchmark::State& state, const std::string& data)
     {
         ngl::lexer lx{ data };
         lx.process_v2();
-        output_size = lx.shapes_.size();
+        output_size = lx.shapes().size();
     }
 
     state.counters["code_size"] = data.size();
@@ -100,7 +107,7 @@ auto asm_lexer = [](benchmark::State& state, const std::string& data)
     {
          ngl::lexer lx{ data };
          lx.asm_process();
-        //output_size = lx.shapes_.size();
+        //output_size = lx.shapes().size();
     }
     state.counters["code_size"] = data.size();
     state.counters["output_size"] = output_size;

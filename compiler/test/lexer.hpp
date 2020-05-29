@@ -1,24 +1,19 @@
 #include <gtest/gtest.h>
 #include <ngl/lexer.hpp>
 
-#define LX_TEST(DATA) std::string data = DATA; \
-                      ngl::lexer lx{ data };
-
 #define LX_EXPECT(...) EXPECT_TRUE(test_tokens(lx, __VA_ARGS__))
 
-#define LX_SHAPE(NAME, TYPE) auto NAME = lx.add_shape_data(TYPE, #NAME)
-
 template<int... Is, class... Ts>
-::testing::AssertionResult has_tokens(const ngl::lexer& lx, std::index_sequence<Is...> n, Ts&&... ts)
+::testing::AssertionResult has_tokens(const ngl::lexer& lx, std::index_sequence<Is...>, Ts&&... ts)
 {
     bool match_size = lx.shapes().size() == sizeof...(ts);
-    if (!match_size) return ::testing::AssertionFailure() << "input size : " << lx.shapes().size() << " expected size : " << sizeof...(ts);
+    if (!match_size) return ::testing::AssertionFailure() << "input size : " << lx.shapes().size() << " expected size : " << sizeof...(ts) << "\nOutput: " << lx.to_string();
 
     bool match_tokens = ((lx.shape_view(Is) == ts) && ...);
     if (match_tokens) return ::testing::AssertionSuccess();
     else
     {
-        return ::testing::AssertionFailure() << "tokens : " << ngl::lexer::to_string(lx.shapes());
+        return ::testing::AssertionFailure() << "tokens : " << lx.to_string();
     }
 }
 

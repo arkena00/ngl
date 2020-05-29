@@ -2,14 +2,24 @@
 #include <array>
 #include <bitset>
 #include <ngl/lexer.hpp>
+#include <ngl/log.hpp>
 
 namespace ngl
 {
     lexer::lexer(const std::string& data)
-        : cursor_{ 0 }
-        , data_{ data }
-    {
+        : data_{ data }
+    {}
 
+    lexer::lexer(ngl::shape_cluster shape_cluster)
+        : data_{}
+    {
+        shape_clusters_.push_back(std::move(shape_cluster));
+    }
+
+    void lexer::process(const std::string& data)
+    {
+        data_ = data;
+        process();
     }
 
     void lexer::process()
@@ -21,27 +31,35 @@ namespace ngl
         uint64_t vector_iterator = 0;
         std::bitset<64> shape_state;
         std::bitset<64> previous_state;
+        std::bitset<64> next_state;
 
-        uint64_t vector_state;
+        uint64_t vector_state = 0;
+        uint64_t pvector_state = 0;
 
-        std::bitset<64> vector_state_mask{ ~uint64_t(0) << scalar_shapes_ };
-        std::bitset<64> scalar_state_mask{ ~vector_state_mask };
+        //std::bitset<64> vector_state_mask{ ~uint64_t(0) << scalar_shapes_ };
+        //std::bitset<64> scalar_state_mask{ ~vector_state_mask };
         shapes_.reserve(data_.size());
+        shapes_.clear();
 
         auto shape_count = 0;
         auto shape_end = false;
         size_t i = 0;
         size_t space = 0;
 
+        if (shape_clusters_.empty()) ngl_error("Lexer requires at least 1 shape_cluster");
+        auto& shape_data = shape_clusters_[0].datas();
+
         for (i = 0; i < data_.size(); ++i)
         {
             shape_state.reset();
+            const auto& element = data_[i];
+            //const auto& next_element = data_[i];
 
-            std::cout << "\n" << data_[i];
+            //std::cout << "\n" << element;
 
-            for (size_t shape_it = 0; shape_it < shape_datas_.size(); ++shape_it)
+            for (size_t shape_it = 0; shape_it < shape_data.size(); ++shape_it)
             {
-                auto& shape = shape_datas_[shape_it];
+                auto& shape = shape_data[shape_it];
                 bool match = false;
                 shape_end = false;
                 vector_state = 0;
@@ -49,7 +67,7 @@ namespace ngl
                 switch (static_cast<shape_type>(shape.type))
                 {
                 case shape_type::space:
-                    if (data_[i] == shape.data)
+                    if (element == shape.data)
                     {
                         space++;
                         goto jump;
@@ -57,7 +75,7 @@ namespace ngl
                     break;
 
                 case shape_type::scalar_element:
-                    match = (data_[i] == shape.data);
+                    match = (element == shape.data);
                     shape_state[shape.index] = match;
                     vector_state = 0;
 
@@ -65,7 +83,7 @@ namespace ngl
                     break;
 
                 case shape_type::scalar_range:
-                    match = (data_[i] >= (shape.data >> 8u) && data_[i] <= ((shape.data << 56u) >> 56u));
+                    match = (element >= (shape.data >> 8u) && element <= ((shape.data << 56u) >> 56u));
                     shape_state[shape.index] = match;
                     vector_state = 0;
 
@@ -83,34 +101,34 @@ namespace ngl
                 case shape_type::vector_sequence: {
                     auto sequence_size = 3u;
 
+                    if (shape.vector_index == sequence_size) shape.vector_index = 0;
+
                     auto shape_index = reinterpret_cast<std::vector<uint64_t>*>(shape.data)->operator[](shape.vector_index);
                     auto next_shape_index = -1;
                     if (shape.vector_index + 1 < sequence_size) next_shape_index = reinterpret_cast<std::vector<uint64_t>*>(shape.data)->operator[](shape.vector_index + 1);
 
-                    bool index_match = shape_state[shape_index];
-                    bool next_match = false;
-                    if (next_shape_index != -1) next_match = shape_state[next_shape_index];
                     bool pmatch = previous_state[shape.index];
+                    bool index_match = shape_state[shape_index];
 
+                    if (!index_match && pmatch && next_shape_index != -1)
+                    {
+                        index_match = shape_state[next_shape_index];
+                        shape.vector_index += index_match;
+                    }
 
-                    match = (bool)shape.vector_index | index_match;
+                    match = index_match;
                     shape_state[shape.index] = match;
 
 
-                    //if (index_match && !pmatch) std::cout << "INIT";
-
                     if (match) vector_state = shape.vector_id;
 
-                    std::cout << " I: " << shape.vector_index
-                              << " NM: " << next_match
-                              << " PM: " << pmatch
-                              << " IM: " << index_match
-                              << " M: " << match << " | " << std::bitset<10>{ shape_state.to_ullong() };
-                    //std::cout << "\n" << (vector_state_mask & shape_state) << " " <<  std::bitset<10>{ shape.vector_id };
-
-                    //if (sequence_size - 1 == shape.vector_index) shape.vector_index = 0;
+                    //std::cout << " I: " << shape.vector_index
+                    //          << " PM: " << pmatch
+                    //          << " IM: " << index_match
+                    //          << " M: " << match;
 
                     shape.vector_index = (shape.vector_index + (!index_match & pmatch));
+
 
                     break;
                 }
@@ -126,15 +144,13 @@ namespace ngl
 
             } // for shape
 
-            /*
-            std::cout << "\n"
-                      << data_[i]
-                      << " | " << std::bitset<10>{ shape_state.to_ullong() }
-                      << " | " << std::bitset<10>{ vector_state };*/
+
+            //std::cout << " | " << std::bitset<10>{ shape_state.to_ullong() }
+            //          << " | " << std::bitset<10>{ vector_state };
 
             if (shape_state.to_ullong() == 0)
             {
-                std::cout << "\nunexpected token\n";
+                ngl_error("unexpected token: {}", element);
                 break;
             }
 
@@ -142,27 +158,30 @@ namespace ngl
             // check if vector_state has single bit when previous_vector_state != vector_state // bool has_single_bit = (~v + 1u) ^ v <  ~v + 1u;
 
             // scalar finalisation
+            /*
             if ((previous_state.to_ullong() & vector_state_mask.to_ullong()) == 0)
             {
                 add_shape(std::to_string(previous_state.to_ullong()), { i - 1 - space, 1 });
                 vector_iterator = 0;
                 space = 0;
-            }
+            }*/
+
+
             // vector finalisation
-            else if ((shape_state.to_ullong() & vector_state_mask.to_ullong()) != (previous_state.to_ullong() & vector_state_mask.to_ullong()))
+            if (vector_state != pvector_state || vector_state == 0)
             {
-                add_shape(std::to_string(previous_state.to_ullong()), { i - vector_iterator - space, vector_iterator });
+                add_shape(std::to_string(previous_state.to_ullong()), { i - vector_iterator - space, vector_iterator});
                 vector_iterator = 0;
                 space = 0;
-                vector_state = 0;
             }
 
-
             previous_state = shape_state;
+            pvector_state = vector_state;
 
             vector_iterator++;
+
         jump:;
-            // std::cout << "\n" << data_[i] << " | " << " " << shape_state;
+            // std::cout << "\n" << element << " | " << " " << shape_state;
         } // for data
 
         // last shape
@@ -189,81 +208,17 @@ namespace ngl
         //std::cout << r;
     }
 
+    void lexer::add(ngl::shape_cluster shape_cluster)
+    {
+        shape_clusters_.push_back(std::move(shape_cluster));
+    }
+
     void lexer::add_shape(const std::string& name, ngl::location location)
     {
         ngl::shape shape;
         shape.name = name;
         shape.location = location;
         shapes_.push_back(shape);
-    }
-
-    ngl::shape_data lexer::add_shape_data(ngl::shape_type shape_type, std::vector<uint64_t> data, const std::string& name)
-    {
-        vec_datas_.push_back(std::move(data));
-
-        ngl::shape_data shape;
-
-        shape.index = shape_data_index_++;
-        shape.id = 1u << shape.index;
-        shape.type = static_cast<uint64_t>(shape_type);
-        shape.data = reinterpret_cast<uint64_t>(std::addressof(vec_datas_.back()));
-        shape.name = name;
-
-        for (const auto& sh_id : vec_datas_.back()) shape.vector_id |= sh_id;
-        shape.vector_id |= shape.id;
-
-        shape_datas_.push_back(shape);
-
-        return shape;
-    }
-
-    ngl::shape_data lexer::add_shape_data(ngl::shape_type shape_type, char data, const std::string& name)
-    {
-        return add_shape_data(shape_type, static_cast<uint64_t>(data), name);
-    }
-
-    ngl::shape_data lexer::add_shape_data(ngl::shape_type shape_type, uint64_t data, const std::string& name)
-    {
-        ngl::shape_data shape;
-
-        switch (shape_type)
-        {
-        case ngl::shape_type::scalar_element:
-        case ngl::shape_type::scalar_element_vector:
-        case ngl::shape_type::scalar_range:
-        case ngl::shape_type::scalar_or:
-            scalar_shapes_++;
-            break;
-        [[fallthrough]]; default:;
-        }
-
-        shape.index = shape_data_index_++;
-        shape.id = 1u << shape.index;
-        std::bitset<64> vector_state_mask{ ~uint64_t(0) << scalar_shapes_ };
-        shape.vector_id = shape.id & vector_state_mask.to_ullong();
-        shape.type = static_cast<uint64_t>(shape_type);
-        shape.data = data;
-        shape.name = name;
-
-        shape_datas_.push_back(shape);
-        return shape;
-    }
-
-    ngl::shape_data lexer::add_shape_data(ngl::shape_element element, const std::string& name)
-    {
-        return add_shape_data(shape_type::scalar_element, element.data, name);
-    }
-    ngl::shape_data lexer::add_shape_data(ngl::shape_or or_, const std::string& name)
-    {
-        return add_shape_data(shape_type::scalar_or, or_.data, name);
-    }
-    ngl::shape_data lexer::add_shape_data(ngl::shape_range range, const std::string& name)
-    {
-        return add_shape_data(shape_type::scalar_range, range.data, name);
-    }
-    ngl::shape_data lexer::add_shape_data(ngl::shape_many many, const std::string& name)
-    {
-        return add_shape_data(shape_type::vector_many, many.data, name);
     }
 
     void lexer::display()
@@ -274,32 +229,20 @@ namespace ngl
         }
         std::cout << std::endl;
     }
-    void lexer::display_shapes_description()
+
+    std::string lexer::to_string(const shape& shape) const
     {
-        for (int i = 0; i < shape_datas_.size(); ++i)
-        {
-            std::cout << "index " << shape_datas_[i].index
-                      << " | id " << std::bitset<16>{ shape_datas_[i].id }
-                      << " | vector_id " << std::bitset<16>{ shape_datas_[i].vector_id }
-                      << " | data " << std::bitset<16>{ shape_datas_[i].data }
-                      << " | " << shape_datas_[i].name << "\n";
-        }
-        std::cout << std::endl;
-    }
-    std::string lexer::to_string(const shape& shape)
-    {
-        std::string str;
-        str += "TK(" + shape.name + ")";
+        std::string str = shape.name + "(" + std::string(data_.substr(shape.location.origin, shape.location.size)) + ")";
 
         return str;
     }
-    std::string lexer::to_string(const std::vector<shape>& shapes)
+    std::string lexer::to_string() const
     {
         std::string str;
 
-        for (const auto& shape : shapes)
+        for (const auto& shape : shapes_)
         {
-            str += to_string(shape);
+            str += to_string(shape) + " ";
         }
 
         return str;

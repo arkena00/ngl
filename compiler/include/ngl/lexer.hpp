@@ -3,6 +3,7 @@
 
 #include <ngl/shape.hpp>
 
+#include "shape_cluster.hpp"
 #include <functional>
 #include <iostream>
 #include <string>
@@ -38,44 +39,31 @@ namespace ngl
         using element_type = char;
 
         explicit lexer(const std::string& data);
+        explicit lexer(ngl::shape_cluster);
 
         void process();
+        void process(const std::string&);
+
         void process_v2();
         void asm_process();
 
+        void add(ngl::shape_cluster);
         void add_shape(const std::string& name, ngl::location);
 
-        ngl::shape_data add_shape_data(ngl::shape_type, std::vector<uint64_t> data, const std::string& name = "shape");
-        ngl::shape_data add_shape_data(ngl::shape_type, char data, const std::string& name = "shape");
-        ngl::shape_data add_shape_data(ngl::shape_type, uint64_t data, const std::string& name = "shape");
-
-
-        ngl::shape_data add_shape_data(ngl::shape_element, const std::string& name = "shape");
-        ngl::shape_data add_shape_data(ngl::shape_or, const std::string& name = "shape");
-        ngl::shape_data add_shape_data(ngl::shape_range, const std::string& name = "shape");
-
-        ngl::shape_data add_shape_data(ngl::shape_many, const std::string& name = "shape");
-
         void display();
-        void display_shapes_description();
 
         [[nodiscard]] std::string_view data() const;
 
         [[nodiscard]] const std::vector<shape>& shapes() const;
         [[nodiscard]] std::string_view shape_view(int index) const;
 
-        static std::string to_string(const shape&);
-        static std::string to_string(const std::vector<shape>&);
+        [[nodiscard]] std::string to_string(const shape&) const;
+        [[nodiscard]] std::string to_string() const;
 
     private:
-        int cursor_;
         std::string_view data_;
         std::vector<shape> shapes_;
-        std::vector<shape_data> shape_datas_;
-        uint64_t shape_data_index_ = 0;
-        uint64_t scalar_shapes_ = 0;
-
-        std::vector<std::vector<uint64_t>> vec_datas_;
+        std::vector<ngl::shape_cluster> shape_clusters_;
 
         std::vector<std::pair<element_type, element_type>> element_ranges_;
         std::vector<element_type> element_scalars_;

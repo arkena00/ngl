@@ -1,4 +1,5 @@
 #include <ngl/lexer.hpp>
+#include <ngl/shape_cluster.hpp>
 
 #include <tao/pegtl.hpp>
 
@@ -23,7 +24,7 @@ namespace
 
     template<typename Rule>
     struct action{};
-/*
+
     template<>
     struct action<identifier>
     {
@@ -32,47 +33,44 @@ namespace
         {
             store("identifier", input.string(), output);
         }
-    };*/
+    };
 }
 
 int main()
 {
     try
     {
-        std::string data = "0_ng_000_ng_";
-        ngl::lexer lx{ data };
+        std::string data = "9_ng_0_ng_9";
 
-        // auto sh_space = lx.add_shape_data("sh_space", ngl::shape_type::scalar_element, ' ');
+        ngl::shape_cluster shapes;
+        auto letter = shapes.add(ngl::shape_range('a', 'z'));
+        auto digit = shapes.add(ngl::shape_range('0', '9'));
+        auto underscore = shapes.add(ngl::shape_element('_'));
+        auto identifier_symbol = shapes.add(ngl::shape_or(letter, underscore));
+        auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol));
+        auto identifier = shapes.add(ngl::shape_sequence(underscore, many_identifier_symbol, underscore));
 
-        auto sh_letter = lx.add_shape_data(ngl::shape_type::scalar_range, uint64_t('a' << 8u | 'z'), "sh_letter");
-        auto sh_digit = lx.add_shape_data(ngl::shape_type::scalar_range, uint64_t('0' << 8u | '9'), "sh_digit");
-        auto sh__ = lx.add_shape_data(ngl::shape_type::scalar_element, '_', "sh__");
-        auto sh_identifier_symbol = lx.add_shape_data(ngl::shape_or(sh_letter, sh_digit), "sh_identifier_symbol");
-        auto sh_many_identifier_symbol = lx.add_shape_data(ngl::shape_type::vector_many, sh_identifier_symbol.id, "sh_many_identifier_symbol");
-        auto sh_number = lx.add_shape_data(ngl::shape_type::vector_many, sh_letter.index, "sh_word");
+        ngl::lexer lx{ shapes };
 
-        auto sh_identifier =
-        lx.add_shape_data(ngl::shape_type::vector_sequence, { sh__.index, sh_many_identifier_symbol.index, sh__.index }, "sh_identifier");
+        shapes.display();
 
-        // auto sh_test = lx.add_shape_data("sh_test", ngl::shape_type::vector_sequence, { sh__, sh_many_identifier_symbol });
-
-        lx.display_shapes_description();
-
-        lx.process();
+        //
+        lx.process(data);
         std::cout << "\n\nCPP lexer\n";
         lx.display();
 
+        //
         std::cout << "\nASM lexer\n";
         lx.asm_process();
 
+        //
         std::cout << "\nPEGTL lexer\n";
         std::vector<ngl::shape> output;
         memory_input input{ data, "data" };
-        if (!parse<grammar, ::action>(input, output))
-            std::cout << "err";
+        if (!parse<grammar, ::action>(input, output)) std::cout << "err";
         for (const auto& shape : output)
         {
-            std::cout << ngl::lexer::to_string(shape);
+            std::cout << shape.name + " ";
         }
     }
     catch (const std::exception& e)
