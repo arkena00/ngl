@@ -1,6 +1,8 @@
 #ifndef COMPILER_INCLUDE_NGL_LEXER_HPP_NGL
 #define COMPILER_INCLUDE_NGL_LEXER_HPP_NGL
 
+#include <ngl/shape.hpp>
+
 #include <functional>
 #include <iostream>
 #include <string>
@@ -10,23 +12,7 @@
 
 namespace ngl
 {
-    enum class shape_type : uint8_t
-    {
-        space = 0
-        , scalar_element = 1
-        , scalar_range
-        , scalar_element_vector
-        , vector_or
-        , vector_many
-        , vector_sequence
-    };
 
-    struct shape_data
-    {
-        uint64_t id = 0; // 1-64
-        uint64_t type = 0; // scalar_*, vector_*, dynamic_*
-        uint64_t data = 0; // (elem)':' | (range)'az' | (vector)'//' 8 char max
-    };
 
     /*
     extern "C"
@@ -34,8 +20,6 @@ namespace ngl
         uint64_t lexer_process(const char*, shape_data*);
     }*/
 
-    struct shape;
-    struct shape_element;
     struct location
     {
         size_t origin;
@@ -61,24 +45,37 @@ namespace ngl
 
         void add_shape(const std::string& name, ngl::location);
 
-        uint64_t add_shape_data(ngl::shape_type, std::vector<uint64_t> data);
-        uint64_t add_shape_data(ngl::shape_type, char data);
-        uint64_t add_shape_data(ngl::shape_type, uint64_t data);
+        ngl::shape_data add_shape_data(ngl::shape_type, std::vector<uint64_t> data, const std::string& name = "shape");
+        ngl::shape_data add_shape_data(ngl::shape_type, char data, const std::string& name = "shape");
+        ngl::shape_data add_shape_data(ngl::shape_type, uint64_t data, const std::string& name = "shape");
+
+
+        ngl::shape_data add_shape_data(ngl::shape_element, const std::string& name = "shape");
+        ngl::shape_data add_shape_data(ngl::shape_or, const std::string& name = "shape");
+        ngl::shape_data add_shape_data(ngl::shape_range, const std::string& name = "shape");
+
+        ngl::shape_data add_shape_data(ngl::shape_many, const std::string& name = "shape");
 
         void display();
+        void display_shapes_description();
 
-        const std::vector<shape>& shapes() const;
+        [[nodiscard]] std::string_view data() const;
 
-        static std::string to_string(shape);
-        static std::string to_string(std::vector<shape>);
+        [[nodiscard]] const std::vector<shape>& shapes() const;
+        [[nodiscard]] std::string_view shape_view(int index) const;
 
-    public:
+        static std::string to_string(const shape&);
+        static std::string to_string(const std::vector<shape>&);
+
+    private:
         int cursor_;
-        const std::string& data_;
+        std::string_view data_;
         std::vector<shape> shapes_;
         std::vector<shape_data> shape_datas_;
-        uint64_t shape_data_index_ = 1;
+        uint64_t shape_data_index_ = 0;
         uint64_t scalar_shapes_ = 0;
+
+        std::vector<std::vector<uint64_t>> vec_datas_;
 
         std::vector<std::pair<element_type, element_type>> element_ranges_;
         std::vector<element_type> element_scalars_;
