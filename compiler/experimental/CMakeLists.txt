@@ -1,12 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
 
-# pegtl
-add_library(lib_pegtl INTERFACE)
-target_include_directories(lib_pegtl SYSTEM INTERFACE ${NGLC_THIRD_PARTY_ROOT}/PEGTL/include)
-
-
-message(STATUS "value : ${CMAKE_INCLUDE_SYSTEM_FLAG_CXX}")
-
 enable_language(ASM_NASM)
 
 set(CMAKE_ASM_NASM_OBJECT_FORMAT win64)
