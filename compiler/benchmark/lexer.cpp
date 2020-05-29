@@ -2,7 +2,7 @@
 #include <benchmark/benchmark.h>
 #include <ngl/lexer.hpp>
 
-#include "third_party/PEGTL/include/tao/pegtl.hpp"
+#include <tao/pegtl.hpp>
 
 
 void store(const std::string& id, const std::string& input, std::vector<ngl::shape>& output)
@@ -18,11 +18,12 @@ namespace
 {
     using namespace tao::pegtl;
 
-    struct identifier : sor< plus< ranges<'a', 'z', '0', '9'>>, plus<one<'_'>> > {};
+    struct identifier : seq< one<'_'>, plus<ranges<'a', 'z', '0', '9'>>, one<'_'> > {};
 
     struct grammar : plus< identifier > {};
 
    template<typename Rule> struct action {};
+
 
    template<>
    struct action<identifier>
@@ -30,7 +31,7 @@ namespace
        template<typename ParseInput>
        static void apply(const ParseInput& input, std::vector<ngl::shape>& output)
        {
-           store("identifier", input.string(), output);
+           store(std::string("identifier"), input.string(), output);
        }
    };
 }
@@ -44,6 +45,7 @@ auto pegtl_lexer = [](benchmark::State& state, const std::string& data)
     for (auto _ : state)
     {
         std::vector<ngl::shape> output;
+        output.reserve(data.size());
         memory_input input{data, "data"};
         parse< grammar, ::action >( input, output );
         output_size = output.size();
@@ -60,13 +62,13 @@ auto lexer = [](benchmark::State& state, const std::string& data)
     for (auto _ : state)
     {
         ngl::lexer lx{ data };
-        auto sh_letter = lx.add_shape_data(ngl::shape_type::scalar_range, uint64_t('a' << 8u | 'z') );
-        auto sh_digit = lx.add_shape_data(ngl::shape_type::scalar_range, uint64_t('0' << 8u | '9'));
-        auto sh__ = lx.add_shape_data(ngl::shape_type::scalar_element, '_');
-        auto sh_identifier_symbol = lx.add_shape_data(ngl::shape_type::vector_or, sh_letter | sh_digit);
-        auto sh_many_identifier_symbol = lx.add_shape_data(ngl::shape_type::vector_many, sh_identifier_symbol);
+        auto sh_letter = lx.add_shape_data("sh_letter", ngl::shape_type::scalar_range, uint64_t('a' << 8u | 'z') );
+        auto sh_digit = lx.add_shape_data("sh_digit", ngl::shape_type::scalar_range, uint64_t('0' << 8u | '9'));
+        auto sh__ = lx.add_shape_data("sh__", ngl::shape_type::scalar_element, '_');
+        auto sh_identifier_symbol = lx.add_shape_data("sh_identifier_symbol", ngl::shape_type::scalar_or, sh_letter | sh_digit);
+        auto sh_many_identifier_symbol = lx.add_shape_data("sh_many_identifier_symbol", ngl::shape_type::vector_many, sh_identifier_symbol);
 
-        auto sh_many_test = lx.add_shape_data(ngl::shape_type::vector_many, sh__);
+        auto sh_identifier = lx.add_shape_data("sh_identifier", ngl::shape_type::vector_sequence, { sh__, sh_many_identifier_symbol, sh__ });
 
         lx.process();
         output_size = lx.shapes_.size();
@@ -108,7 +110,7 @@ auto asm_lexer = [](benchmark::State& state, const std::string& data)
 int main(int argc, char** argv)
 {
     //std::string data = "ngl test zeta00 ";
-    std::string data = "ngl___00_";
+    std::string data = "_ng_";
     std::string data2 = [&data]{ std::string str; for(int i = 0; i < 1000000; ++i) { str += data; }; return str; }();
 
 

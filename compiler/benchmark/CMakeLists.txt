@@ -25,10 +25,9 @@ set(CMAKE_ASM_NASM_FLAGS "${ASM_NASM_FLAGS}")
 
 function(bench_target target)
     target_include_directories(${target} PRIVATE ${NGLC_THIRD_PARTY_ROOT}/benchmark/include)
-    target_link_libraries(${target} lib_nglc)
+    target_link_libraries(${target} lib_nglc lib_pegtl)
     target_link_libraries(${target} "${NGLC_THIRD_PARTY_ROOT}/benchmark/lib/benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}" shlwapi)
-    add_dependencies(${target} lib_nglc)
-    add_dependencies(${target} third_party_benchmark)
+    add_dependencies(${target} lib_nglc third_party_benchmark lib_pegtl)
     set_target_properties(${target} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${NGLC_BIN_ROOT}/benchmark
             OUTPUT_NAME ${target})
