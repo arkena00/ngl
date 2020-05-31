@@ -18,13 +18,13 @@ namespace
 
     //struct identifier : sor<plus<ranges<'a', 'z', '0', '9'>>, plus<one<'_'>>>{};
     struct identifier : seq< one<'_'>, plus<ranges<'a', 'z', '0', '9'>>, one<'_'> > {};
-    struct number : plus<ranges<'0', '9'>> {};
+    struct number : ranges<'0', '9'> {};
 
     struct grammar : plus<sor<identifier, number>>{};
 
     template<typename Rule>
     struct action{};
-
+/*
     template<>
     struct action<identifier>
     {
@@ -34,21 +34,36 @@ namespace
             store("identifier", input.string(), output);
         }
     };
+
+    template<>
+    struct action<number>
+    {
+        template<typename ParseInput>
+        static void apply(const ParseInput& input, std::vector<ngl::shape>& output)
+        {
+            store("number", input.string(), output);
+        }
+    };*/
 }
 
 int main()
 {
     try
     {
-        std::string data = "9_ng_0_ng_9";
+        std::string data = "1212struct12";
 
         ngl::shape_cluster shapes;
+        /*
         auto letter = shapes.add(ngl::shape_range('a', 'z'));
         auto digit = shapes.add(ngl::shape_range('0', '9'));
         auto underscore = shapes.add(ngl::shape_element('_'));
         auto identifier_symbol = shapes.add(ngl::shape_or(letter, underscore));
         auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol));
-        auto identifier = shapes.add(ngl::shape_sequence(underscore, many_identifier_symbol, underscore));
+        auto identifier = shapes.add(ngl::shape_sequence(underscore, many_identifier_symbol, underscore));*/
+
+        shapes.add(ngl::shape_element('1'));
+        shapes.add(ngl::shape_element('2'));
+        shapes.add(ngl::shape_element_vector("struct"));
 
         ngl::lexer lx{ shapes };
 
@@ -104,24 +119,19 @@ vector_id
  */
 
 /*
-letter: az
-cap_letter: AZ
+auto letter = shapes.add(ngl::shape_range('a', 'z'));
+auto digit = shapes.add(ngl::shape_range('0', '9'));
+auto underscore = shapes.add(ngl::shape_element('_'));
 
-underscore: _
-dbl_quote: "
-plus: +
-minus: -
-dot: .
-
-id_symbol: letter | cap_letter | underscore
+auto identifier_symbol = shapes.add(ngl::shape_or(letter, underscore));
+auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol));
+auto identifier = shapes.add(ngl::shape_sequence(identifier_symbol, many_identifier_symbol));
 
 
-string: dbl_quote ( !dbl_quote ) dbl_quote
-number:  (plus | minus)? digit+ (dot digit+)?
 
-operator: ^(\+|\-|\*|/|<=|>=|!=|<|>|@=|@|=|\^)
 
 identifier: (letter | cap_letter) id_symbol* ^[a-zA-Z_][a-zA-Z0-9_\-?']*
+operator: ^(\+|\-|\*|/|<=|>=|!=|<|>|@=|@|=|\^)
 capture: ^&[a-zA-Z_][a-zA-Z0-9_\-?']*
 getfield: ^\.[a-zA-Z_][a-zA-Z0-9_\-?']*
 skip: ^[\s]+
@@ -133,15 +143,24 @@ shorthand: ^[']
 
 
 /*
-    state 0100
-    seq<_ ng _> 0
-    E  _ I: 0 C: 0 R: 1
-    E  n I: 0 C: 1 R: 0        0 & 1 -> I++
-    ML n I: 1 C: 0 R: 1
-    ML g I: 1 C: 1 R: 1
-    ML _ I: 1 C: 2 R: 0        0 & 1 -> I++
-    E  _ I: 2 C: 0 R: 1
-    E  0 I: 2 C: 1 R: 0        0 & 1 -> end
+    I: index
+    IM: index_match
+    NM: next IM
+    LI: last index
+    LS: last shape
+    VID: vector id
+
+    # seq<_ ng _>
+    _ I: 0 IM: 1 PM: 0 NM: 0 M: 1
+        n I: 0 IM: 0 PM: 1 NM: 1 M: 0 -> if !IM && PM -> I = 1 IM = 1 M = 1
+    n I: 1 IM: 1 PM: 1 NM: 0 M: 1
+    g I: 1 IM: 1 PM: 1 NM: 0 M: 1
+        _ I: 1 IM: 0 PM: 1 NM: 1 M: 0 -> if !IM && PM -> I = 2 IM = 1 M = 1
+    _ I: 2 IM: 1 PM: 1 NM: 0 M: 1
+
+    #end1 I == LI && is_scalar<LS>               -> I = 0 VID = ~VID
+    #end2 I == LI && !is_scalar<LS> && NM == 0   -> I = 0 VID = ~VID
+
 
     Size S
     False F
@@ -152,28 +171,3 @@ shorthand: ^[']
 
 
     */
-
-    /*
-    _  000001
-    L  000010
-    D  000100
-    ML 001000
-    S  010000
-    S  100000
-
-    S<_, ML, D>
-    S<_ D>
-    // _  a b 0 1
-    _  010001
-    a  011000
-    b  011000
-    0  010100
-    1  000100
-
-    scalar   000111
-    vector   001000
-    sequence 010000
-
-
-    //auto sh_many_test = lx.add_shape_data("NAME", ngl::shape_type::vector_many, sh__);
-*/

@@ -77,6 +77,10 @@ namespace ngl
     {
         return add(shape_type::scalar_element, element.data, name);
     }
+    ngl::shape_data shape_cluster::add(ngl::shape_element_vector element, const std::string& name)
+    {
+        return add(shape_type::scalar_element_vector, element.data, name);
+    }
     ngl::shape_data shape_cluster::add(ngl::shape_or or_, const std::string& name)
     {
         return add(shape_type::scalar_or, or_.data, name);

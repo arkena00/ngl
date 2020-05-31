@@ -33,21 +33,32 @@ namespace
     using namespace tao::pegtl;
 
     struct identifier : seq< one<'_'>, plus<ranges<'a', 'z', '0', '9'>>, one<'_'> > {};
+    struct number : ranges<'0', '9'> {};
 
-    struct grammar : plus< identifier > {};
+    struct grammar : plus<sor<identifier, number>>{};
 
-   template<typename Rule> struct action {};
+    template<typename Rule>
+    struct action{};
 
+    template<>
+    struct action<identifier>
+    {
+        template<typename ParseInput>
+        static void apply(const ParseInput& input, std::vector<ngl::shape>& output)
+        {
+            store("identifier", input.string(), output);
+        }
+    };
 
-   template<>
-   struct action<identifier>
-   {
-       template<typename ParseInput>
-       static void apply(const ParseInput& input, std::vector<ngl::shape>& output)
-       {
-           store(std::string("identifier"), input.string(), output);
-       }
-   };
+    template<>
+    struct action<number>
+    {
+        template<typename ParseInput>
+        static void apply(const ParseInput& input, std::vector<ngl::shape>& output)
+        {
+            store("number", input.string(), output);
+        }
+    };
 }
 
 
@@ -117,7 +128,7 @@ auto asm_lexer = [](benchmark::State& state, const std::string& data)
 int main(int argc, char** argv)
 {
     //std::string data = "ngl test zeta00 ";
-    std::string data = "_ng_";
+    std::string data = "9_ng_0_ng_9";
     std::string data2 = [&data]{ std::string str; for(int i = 0; i < 1000000; ++i) { str += data; }; return str; }();
 
 

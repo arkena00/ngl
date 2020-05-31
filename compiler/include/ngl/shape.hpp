@@ -1,6 +1,8 @@
 #ifndef COMPILER_INCLUDE_NGL_SHAPE_HPP_NGL
 #define COMPILER_INCLUDE_NGL_SHAPE_HPP_NGL
 
+#include <ngl/assert.hpp>
+
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -34,6 +36,21 @@ namespace ngl
     {
         explicit shape_element(char e) : data{ e } {}
         char data;
+    };
+
+    struct shape_element_vector
+    {
+        explicit shape_element_vector(std::string_view e)
+            : data{ 0 }
+        {
+            ngl_assert(e.size() <= 8);
+            uint8_t i = 0;
+            for (auto c : e)
+            {
+                data = data | (static_cast<uint64_t>(c) << 8 * i++);
+            }
+        }
+        uint64_t data;
     };
 
     struct shape_many

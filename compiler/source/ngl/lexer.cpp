@@ -38,8 +38,8 @@ namespace ngl
 
         //std::bitset<64> vector_state_mask{ ~uint64_t(0) << scalar_shapes_ };
         //std::bitset<64> scalar_state_mask{ ~vector_state_mask };
-        shapes_.reserve(data_.size());
         shapes_.clear();
+        shapes_.reserve(data_.size());
 
         auto shape_count = 0;
         auto shape_end = false;
@@ -55,7 +55,7 @@ namespace ngl
             const auto& element = data_[i];
             //const auto& next_element = data_[i];
 
-            //std::cout << "\n" << element;
+            std::cout << "\n" << element;
 
             for (size_t shape_it = 0; shape_it < shape_data.size(); ++shape_it)
             {
@@ -79,7 +79,13 @@ namespace ngl
                     shape_state[shape.index] = match;
                     vector_state = 0;
 
-                    // if (match) shape_it = scalar_shapes_ - 1;
+                    break;
+
+                case shape_type::scalar_element_vector:
+                    match = shape.data == (*reinterpret_cast<const uint64_t*>(&element) & shape.data);
+                    shape_state[shape.index] = match;
+                    vector_state = 0;
+
                     break;
 
                 case shape_type::scalar_range:
@@ -98,10 +104,18 @@ namespace ngl
                     // shape_it += scalar_shapes_ - 1;
                     break;
 
+                    //!     # seq<_ ng _>
+                    //!    _ I: 0 IM: 1 PM: 0 NM: 0 M: 1
+                    //!        n I: 0 IM: 0 PM: 1 NM: 1 M: 0 -> if !IM && PM -> I = 1 IM = 1 M = 1
+                    //!    n I: 1 IM: 1 PM: 1 NM: 0 M: 1
+                    //!    g I: 1 IM: 1 PM: 1 NM: 0 M: 1
+                    //!        _ I: 1 IM: 0 PM: 1 NM: 1 M: 0 -> if !IM && PM -> I = 2 IM = 1 M = 1
+                    //!    _ I: 2 IM: 1 PM: 1 NM: 0 M: 1
+                    //!
+                    //!    #end1 I == LI && is_scalar<LS>               -> I = 0 VID = ~VID
+                    //!    #end2 I == LI && !is_scalar<LS> && NM == 0   -> I = 0 VID = ~VID
                 case shape_type::vector_sequence: {
                     auto sequence_size = 3u;
-
-                    if (shape.vector_index == sequence_size) shape.vector_index = 0;
 
                     auto shape_index = reinterpret_cast<std::vector<uint64_t>*>(shape.data)->operator[](shape.vector_index);
                     auto next_shape_index = -1;
@@ -119,16 +133,18 @@ namespace ngl
                     match = index_match;
                     shape_state[shape.index] = match;
 
-
                     if (match) vector_state = shape.vector_id;
-
-                    //std::cout << " I: " << shape.vector_index
-                    //          << " PM: " << pmatch
-                    //          << " IM: " << index_match
-                    //          << " M: " << match;
+                    else
+                    {
+                        shape.vector_index = 0;
+                    }
 
                     shape.vector_index = (shape.vector_index + (!index_match & pmatch));
 
+                    //std::cout << " I: " << shape.vector_index
+                    //  << " PM: " << pmatch
+                    //  << " IM: " << index_match
+                    //  << " M: " << match;
 
                     break;
                 }
@@ -145,8 +161,10 @@ namespace ngl
             } // for shape
 
 
-            //std::cout << " | " << std::bitset<10>{ shape_state.to_ullong() }
-            //          << " | " << std::bitset<10>{ vector_state };
+            std::cout << " | " << std::bitset<10>{ shape_state.to_ullong() }
+                      << " | " << std::bitset<10>{ vector_state };
+
+            //std::cout << debug;
 
             if (shape_state.to_ullong() == 0)
             {
@@ -170,7 +188,8 @@ namespace ngl
             // vector finalisation
             if (vector_state != pvector_state || vector_state == 0)
             {
-                add_shape(std::to_string(previous_state.to_ullong()), { i - vector_iterator - space, vector_iterator});
+                std::cout << "__" << (i - vector_iterator - space) << "__" << vector_iterator;
+                add_shape(std::to_string(previous_state.to_ullong()), { i - vector_iterator - space, vector_iterator });
                 vector_iterator = 0;
                 space = 0;
             }

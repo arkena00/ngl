@@ -23,6 +23,7 @@ namespace ngl
         ngl::shape_data add(ngl::shape_type, uint64_t data, const std::string& name = "shape");
 
         ngl::shape_data add(ngl::shape_element, const std::string& name = "shape_element");
+        ngl::shape_data add(ngl::shape_element_vector, const std::string& name = "shape_element_vector");
         ngl::shape_data add(ngl::shape_many, const std::string& name = "shape_many");
         ngl::shape_data add(ngl::shape_or, const std::string& name = "shape_or");
         ngl::shape_data add(ngl::shape_range, const std::string& name = "shape_range");
