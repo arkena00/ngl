@@ -12,10 +12,10 @@ namespace ngl
     enum class shape_type : uint8_t
     {
         space = 0
-        , scalar_element = 1
+        , scalar_element
         , scalar_range
         , scalar_element_vector
-        , scalar_or
+        , composite_or
         , vector_many
         , vector_sequence
     };
@@ -79,6 +79,12 @@ namespace ngl
         explicit shape_sequence(Shapes&&... shapes) : data{ std::forward<Shapes>(shapes).index... }
         {}
         std::vector<uint64_t> data;
+    };
+
+    struct shape_space
+    {
+        explicit shape_space(char s) : data{ static_cast<uint64_t>(s) } {}
+        uint64_t data;
     };
 } // ngl
 

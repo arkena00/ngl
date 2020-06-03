@@ -28,6 +28,9 @@ namespace ngl
         ngl::shape_data add(ngl::shape_or, const std::string& name = "shape_or");
         ngl::shape_data add(ngl::shape_range, const std::string& name = "shape_range");
         ngl::shape_data add(ngl::shape_sequence, const std::string& name = "shape_sequence");
+        ngl::shape_data add(ngl::shape_space space, const std::string& name = "shape_space");
+
+        uint64_t scalar_shapes_count() const;
 
     private:
         std::string name_;

@@ -6,15 +6,34 @@
 
 namespace ngl_shapes
 {
-    static ngl::shape_cluster identifier;
+    static ngl::shape_cluster shapes;
     namespace
     {
+        /*
         static auto letter = identifier.add(ngl::shape_range('a', 'z'));
         static auto digit = identifier.add(ngl::shape_range('0', '9'));
         static auto underscore = identifier.add(ngl::shape_element('_'));
         static auto identifier_symbol = identifier.add(ngl::shape_or(letter, underscore));
         static auto many_identifier_symbol = identifier.add(ngl::shape_many(identifier_symbol));
         static auto cluster = identifier.add(ngl::shape_sequence(underscore, many_identifier_symbol, underscore));
+         */
+
+        auto space = shapes.add(ngl::shape_space(' '));
+
+        auto min_letter = shapes.add(ngl::shape_range('a', 'z'));
+        auto max_letter = shapes.add(ngl::shape_range('A', 'Z'));
+        auto digit = shapes.add(ngl::shape_range('0', '9'));
+        auto underscore = shapes.add(ngl::shape_element('_'));
+        auto dash = shapes.add(ngl::shape_element('-'));
+        auto qmark = shapes.add(ngl::shape_element('?'));
+        auto single_quote = shapes.add(ngl::shape_element('\''));
+
+        auto letter = shapes.add(ngl::shape_or(min_letter, max_letter));
+
+
+        auto identifier_symbol = shapes.add(ngl::shape_or(letter, digit, underscore, dash, qmark, single_quote));
+        auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol));
+        auto identifier = shapes.add(ngl::shape_sequence(letter, many_identifier_symbol));
     }
 }
 
@@ -32,10 +51,16 @@ namespace
 {
     using namespace tao::pegtl;
 
-    struct identifier : seq< one<'_'>, plus<ranges<'a', 'z', '0', '9'>>, one<'_'> > {};
+    struct letter : sor<ranges<'a', 'z'>, ranges<'A', 'Z'>> {};
+    struct underscore : one<'_'> {};
+    struct dash : one<'-'> {};
+    struct qmark : one<'?'> {};
+    struct squote : one<'\''> {};
     struct number : ranges<'0', '9'> {};
+    struct identifier : seq<letter, plus<sor<underscore, dash, qmark, squote, letter, number>>> {};
+    struct space : plus<one<' '>> {};
 
-    struct grammar : plus<sor<identifier, number>>{};
+    struct grammar : plus<sor<identifier, space>>{};
 
     template<typename Rule>
     struct action{};
@@ -50,6 +75,7 @@ namespace
         }
     };
 
+/*
     template<>
     struct action<number>
     {
@@ -58,7 +84,7 @@ namespace
         {
             store("number", input.string(), output);
         }
-    };
+    };*/
 }
 
 
@@ -78,6 +104,7 @@ auto pegtl_lexer = [](benchmark::State& state, const std::string& data)
 
     state.counters["code_size"] = data.size();
     state.counters["output_size"] = output_size;
+
 };
 
 auto lexer = [](benchmark::State& state, const std::string& data)
@@ -86,7 +113,7 @@ auto lexer = [](benchmark::State& state, const std::string& data)
 
     for (auto _ : state)
     {
-        ngl::lexer lx{ ngl_shapes::identifier };
+        ngl::lexer lx{ ngl_shapes::shapes };
 
         lx.process(data);
         output_size = lx.shapes().size();
@@ -101,11 +128,11 @@ auto lexer2 = [](benchmark::State& state, const std::string& data)
 
     for (auto _ : state)
     {
-        ngl::lexer lx{ data };
-        lx.process_v2();
+        ngl::lexer lx{ ngl_shapes::shapes };
+
+        lx.process_v2(data);
         output_size = lx.shapes().size();
     }
-
     state.counters["code_size"] = data.size();
     state.counters["output_size"] = output_size;
 };
@@ -128,32 +155,21 @@ auto asm_lexer = [](benchmark::State& state, const std::string& data)
 int main(int argc, char** argv)
 {
     //std::string data = "ngl test zeta00 ";
-    std::string data = "9_ng_0_ng_9";
-    std::string data2 = [&data]{ std::string str; for(int i = 0; i < 1000000; ++i) { str += data; }; return str; }();
+    std::string data = "ngl-00? zeta_0' ";
+    std::string data2 = [&data]{ std::string str; for(int i = 0; i < 100000; ++i) { str += data; }; return str; }();
 
 
     benchmark::RegisterBenchmark("pegtl_lexer", pegtl_lexer, data)->Unit(benchmark::kMicrosecond);
     benchmark::RegisterBenchmark("pegtl_lexer", pegtl_lexer, data2)->Unit(benchmark::kMicrosecond);
     benchmark::RegisterBenchmark("lexer", lexer, data)->Unit(benchmark::kMicrosecond);
     benchmark::RegisterBenchmark("lexer", lexer, data2)->Unit(benchmark::kMicrosecond);
-    //benchmark::RegisterBenchmark("asm_lexer", asm_lexer, data)->Unit(benchmark::kMicrosecond);
-    //benchmark::RegisterBenchmark("asm_lexer", asm_lexer, data2)->Unit(benchmark::kMicrosecond);
-    //benchmark::RegisterBenchmark("lexer2", lexer2, data)->Unit(benchmark::kMicrosecond);
-    //benchmark::RegisterBenchmark("lexer2", lexer2, data2)->Unit(benchmark::kMicrosecond);
 
-    //benchmark::RegisterBenchmark("test_array", test_array, data2)->Unit(benchmark::kMicrosecond);
-    //benchmark::RegisterBenchmark("test_singleloop", test_singleloop, data2)->Unit(benchmark::kMicrosecond);
+    benchmark::RegisterBenchmark("lexer2", lexer2, data)->Unit(benchmark::kMicrosecond);
+    benchmark::RegisterBenchmark("lexer2", lexer2, data2)->Unit(benchmark::kMicrosecond);
+
 
     benchmark::Initialize(&argc, argv);
     benchmark::RunSpecifiedBenchmarks();
-
-
-/*
-    pegtl::memory_input input{data, "data"};
-    std::string output;
-    if (pegtl::parse< lx::grammar, lx::action >( input, output )) std::cout << "ok";
-    else std::cout << "err";
-    std::cout << pegtl_output.size();*/
 
 
     return 0;

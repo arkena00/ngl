@@ -44,7 +44,7 @@ namespace ngl
         void process();
         void process(const std::string&);
 
-        void process_v2();
+        void process_v2(const std::string&);
         void asm_process();
 
         void add(ngl::shape_cluster);

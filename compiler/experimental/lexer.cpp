@@ -17,14 +17,22 @@ namespace
     using namespace tao::pegtl;
 
     //struct identifier : sor<plus<ranges<'a', 'z', '0', '9'>>, plus<one<'_'>>>{};
-    struct identifier : seq< one<'_'>, plus<ranges<'a', 'z', '0', '9'>>, one<'_'> > {};
-    struct number : ranges<'0', '9'> {};
+    //identifier: ^[a-zA-Z_][a-zA-Z0-9_\-?']*
 
-    struct grammar : plus<sor<identifier, number>>{};
+    struct letter : sor<ranges<'a', 'z'>, ranges<'A', 'Z'>> {};
+    struct underscore : one<'_'> {};
+    struct dash : one<'-'> {};
+    struct qmark : one<'?'> {};
+    struct squote : one<'\''> {};
+    struct number : ranges<'0', '9'> {};
+    struct identifier : seq<letter, plus<sor<underscore, dash, qmark, squote, letter, number>>> {};
+    struct space : plus<one<' '>> {};
+
+    struct grammar : plus<sor<identifier, plus<one<' '>>>>{};
 
     template<typename Rule>
     struct action{};
-/*
+
     template<>
     struct action<identifier>
     {
@@ -34,7 +42,7 @@ namespace
             store("identifier", input.string(), output);
         }
     };
-
+/*
     template<>
     struct action<number>
     {
@@ -50,23 +58,30 @@ int main()
 {
     try
     {
-        std::string data = "1212struct12";
+        std::string data = "ngl-00?   zeta_0' ";
 
         ngl::shape_cluster shapes;
-        /*
-        auto letter = shapes.add(ngl::shape_range('a', 'z'));
+
+        auto space = shapes.add(ngl::shape_space(' '));
+
+        auto min_letter = shapes.add(ngl::shape_range('a', 'z'));
+        auto max_letter = shapes.add(ngl::shape_range('A', 'Z'));
         auto digit = shapes.add(ngl::shape_range('0', '9'));
         auto underscore = shapes.add(ngl::shape_element('_'));
-        auto identifier_symbol = shapes.add(ngl::shape_or(letter, underscore));
-        auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol));
-        auto identifier = shapes.add(ngl::shape_sequence(underscore, many_identifier_symbol, underscore));*/
+        auto dash = shapes.add(ngl::shape_element('-'));
+        auto qmark = shapes.add(ngl::shape_element('?'));
+        auto single_quote = shapes.add(ngl::shape_element('\''));
 
-        shapes.add(ngl::shape_element('1'));
-        shapes.add(ngl::shape_element('2'));
-        shapes.add(ngl::shape_element_vector("struct"));
+        auto letter = shapes.add(ngl::shape_or(min_letter, max_letter));
+
+
+        auto identifier_symbol = shapes.add(ngl::shape_or(letter, digit, underscore, dash, qmark, single_quote));
+        auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol));
+        auto identifier = shapes.add(ngl::shape_sequence(letter, many_identifier_symbol));
+
+
 
         ngl::lexer lx{ shapes };
-
         shapes.display();
 
         //
@@ -98,38 +113,6 @@ int main()
 
 
 /*
-string = "ngl_00 "
-// identifier = letter (letter | digit | '_')+
-// number = sign?
-// test = letter, #
-1   00001 [az]      scalar letter
-2   00010 [09]      scalar digit
-4   00100 [_]       scalar _
-8   01000 [00111]   id_symbol scalar_or<1 2 4>
-16  10000 [[1 8]]  identifier sequence<1, 8>
-32        [16]      many<id_symbol> // many<16>
-
-vector_id
-0000000001010100
-0000000001010100
-0000000001010100
-
-
-
- */
-
-/*
-auto letter = shapes.add(ngl::shape_range('a', 'z'));
-auto digit = shapes.add(ngl::shape_range('0', '9'));
-auto underscore = shapes.add(ngl::shape_element('_'));
-
-auto identifier_symbol = shapes.add(ngl::shape_or(letter, underscore));
-auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol));
-auto identifier = shapes.add(ngl::shape_sequence(identifier_symbol, many_identifier_symbol));
-
-
-
-
 identifier: (letter | cap_letter) id_symbol* ^[a-zA-Z_][a-zA-Z0-9_\-?']*
 operator: ^(\+|\-|\*|/|<=|>=|!=|<|>|@=|@|=|\^)
 capture: ^&[a-zA-Z_][a-zA-Z0-9_\-?']*
@@ -138,6 +121,7 @@ skip: ^[\s]+
 comment: # any
 shorthand: ^[']
  */
+
 
 
 
