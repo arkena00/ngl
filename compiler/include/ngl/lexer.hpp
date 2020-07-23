@@ -38,8 +38,8 @@ namespace ngl
     public:
         using element_type = char;
 
-        explicit lexer(const std::string& data);
-        explicit lexer(ngl::shape_cluster);
+        explicit lexer();
+        explicit lexer(ngl::shape_cluster&);
 
         void process();
         void process(const std::string&);
@@ -47,7 +47,7 @@ namespace ngl
         void process_v2(const std::string&);
         void asm_process();
 
-        void add(ngl::shape_cluster);
+        void add(ngl::shape_cluster&);
         void add_shape(const std::string& name, ngl::location);
 
         void display();
@@ -63,7 +63,7 @@ namespace ngl
     private:
         std::string_view data_;
         std::vector<shape> shapes_;
-        std::vector<ngl::shape_cluster> shape_clusters_;
+        std::vector<std::reference_wrapper<ngl::shape_cluster>> shape_clusters_;
 
         std::vector<std::pair<element_type, element_type>> element_ranges_;
         std::vector<element_type> element_scalars_;

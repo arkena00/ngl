@@ -1,16 +1,16 @@
-ngl:shape digit
+ngl:shape:element comparison ==
+ngl:shape:element open_brace {
+ngl:shape:element line_return \n
+ngl:shape:element edge :
+ngl:shape:element space \s
+
+ngl:shape letter
 {
-    digit == 0
-    digit == 1
+
 }
 
-ngl:shape number
-{
-    number == digit
-}
 
-
-ngl:shape identifier
+ngl:shape scalar_description
 {
-    identifier == letter
+    ngl:shape:identifier ngl:shape:identifier
 }

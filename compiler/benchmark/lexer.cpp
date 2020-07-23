@@ -143,7 +143,7 @@ auto asm_lexer = [](benchmark::State& state, const std::string& data)
 
     for (auto _ : state)
     {
-         ngl::lexer lx{ data };
+         ngl::lexer lx{ ngl_shapes::shapes };
          lx.asm_process();
         //output_size = lx.shapes().size();
     }

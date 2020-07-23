@@ -8,7 +8,7 @@ namespace ngl
     cluster::cluster(std::string name, std::string source)
         : name_{ std::move(name) }
         , source_{ std::move(source) }
-        , lexer_{ source_ }
+        , lexer_{ }
         , parser_{ lexer_ }
         , root_{ nullptr }
     {

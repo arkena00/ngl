@@ -10,12 +10,9 @@ __`[example]`__
 
 
 ```
-ngl:element digit
+ngl:shape:element digit
 {
-    ngl:shape
-    {
-        element == [0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9]
-    }
+    digit == [0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9]
 }
 
 ngl:concept digit
@@ -23,7 +20,7 @@ ngl:concept digit
     ngl:data <value>
     ngl:rule
     {
-        value == (0 | 1 .. | 9)
+        digit == (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)
     }
 }
 
@@ -102,15 +99,6 @@ ngc:program
     ngl::print<test.form.input.text>
 }
 
-ngc test
-{
-    ngl:rule
-    {
-        .require |fr-fr| a égal zéro
-        |ngl|
-        .require a == 0
-    } 
-}
 
 ngl:format:html zeta_form
 <form>
@@ -146,9 +134,20 @@ ngl:shape brainfuck
     .element [ < > + - . , [ ] ]
 }
 
-ngl:shape:brainfuck hello_world
+ngl:program hello_world
 {
+    .shape brainfuck
     +[-->-[>>+>-----<<]<--<---]>-.>>>+.>>..+++[.>]<<<<.+++.------.<<-.>>>>+.
 }
+
+ngl:data<shape: xml> form
+{
+    <form>
+        <p>test</p>
+        <input text = "$ ngc:string <value> $" />
+    </form>
+}
+
+ngl:data
 
 ```

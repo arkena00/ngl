@@ -23,7 +23,7 @@ jln_target_interface(lib_ccw INTERFACE
 
 
 add_compile_definitions(_ITERATOR_DEBUG_LEVEL=0)
-add_compile_options("/MD")
+add_compile_options(/MD)
 
 #
 #add_compile_options(

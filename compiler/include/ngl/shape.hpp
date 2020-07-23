@@ -15,7 +15,8 @@ namespace ngl
         , scalar_element
         , scalar_range
         , scalar_element_vector
-        , composite_or
+        , logical_or
+        , logical_not
         , vector_many
         , vector_sequence
     };
@@ -57,6 +58,13 @@ namespace ngl
     {
         template<class Shape>
         explicit shape_many(Shape shape) : data{ shape.index } {}
+        uint64_t data;
+    };
+
+    struct shape_not
+    {
+        template<class Shape>
+        explicit shape_not(Shape shape) : data{ shape.id } {}
         uint64_t data;
     };
 

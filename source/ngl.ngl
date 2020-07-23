@@ -9,7 +9,10 @@ ngl ngl
     concept
 }
 
-
+ngl data
+{
+    ngl:shape ngl:shape:ngl
+}
 
 ngl:environment computer
 {

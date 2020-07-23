@@ -32,7 +32,7 @@ namespace
 
     template<typename Rule>
     struct action{};
-
+/*
     template<>
     struct action<identifier>
     {
@@ -41,7 +41,7 @@ namespace
         {
             store("identifier", input.string(), output);
         }
-    };
+    };*/
 /*
     template<>
     struct action<number>
@@ -58,31 +58,39 @@ int main()
 {
     try
     {
-        std::string data = "ngl-00?   zeta_0' ";
-
         ngl::shape_cluster shapes;
 
         auto space = shapes.add(ngl::shape_space(' '));
 
-        auto min_letter = shapes.add(ngl::shape_range('a', 'z'));
-        auto max_letter = shapes.add(ngl::shape_range('A', 'Z'));
-        auto digit = shapes.add(ngl::shape_range('0', '9'));
-        auto underscore = shapes.add(ngl::shape_element('_'));
-        auto dash = shapes.add(ngl::shape_element('-'));
-        auto qmark = shapes.add(ngl::shape_element('?'));
-        auto single_quote = shapes.add(ngl::shape_element('\''));
+        auto min_letter = shapes.add(ngl::shape_range('a', 'z'), "range_az");
+        auto max_letter = shapes.add(ngl::shape_range('A', 'Z'), "range_AZ");
+        auto digit = shapes.add(ngl::shape_range('0', '9'), "range_09");
+        auto underscore = shapes.add(ngl::shape_element('_'), "element__");
+        auto colon = shapes.add(ngl::shape_element(':'), "element_:");
+        auto bracket_open = shapes.add(ngl::shape_element('['), "element_[");
+        auto bracket_close = shapes.add(ngl::shape_element(']'), "element_]");
+        //auto chevron_open = shapes.add(ngl::shape_element('<'), "element_<");
+        //auto chevron_close = shapes.add(ngl::shape_element('>'), "element_>");
 
-        auto letter = shapes.add(ngl::shape_or(min_letter, max_letter));
+        auto letter = shapes.add(ngl::shape_or(min_letter, max_letter), "letter");
+
+        auto identifier_symbol = shapes.add(ngl::shape_or(letter, digit, underscore), "id_symbol");
+        auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol), "id_symbol+");
+        auto raw_identifier = shapes.add(ngl::shape_sequence(letter, many_identifier_symbol), "raw_identifier");
 
 
-        auto identifier_symbol = shapes.add(ngl::shape_or(letter, digit, underscore, dash, qmark, single_quote));
-        auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol));
-        auto identifier = shapes.add(ngl::shape_sequence(letter, many_identifier_symbol));
+        auto not_bracket_close = shapes.add(ngl::shape_not(bracket_close), "not_]");
+        auto concrete_data = shapes.add(ngl::shape_sequence(bracket_open, not_bracket_close, bracket_close), "concrete");
 
 
+        // auto parameterized_identifier = shapes.add(ngl::shape_sequence(chevron_close, chevron_open, chevron_close));
+
+        std::string data = "ngl:shape comparison [==] // test";
+
+
+        shapes.display();
 
         ngl::lexer lx{ shapes };
-        shapes.display();
 
         //
         lx.process(data);
@@ -113,6 +121,18 @@ int main()
 
 
 /*
+ngl test
+ngl test {  }
+
+scalar_desc : sequence<identifier, identifier>
+vector_desc : sequence<identifier, identifier, {, }>
+
+identifier  identifier
+
+*/
+
+
+/*
 identifier: (letter | cap_letter) id_symbol* ^[a-zA-Z_][a-zA-Z0-9_\-?']*
 operator: ^(\+|\-|\*|/|<=|>=|!=|<|>|@=|@|=|\^)
 capture: ^&[a-zA-Z_][a-zA-Z0-9_\-?']*
@@ -121,8 +141,6 @@ skip: ^[\s]+
 comment: # any
 shorthand: ^[']
  */
-
-
 
 
 
