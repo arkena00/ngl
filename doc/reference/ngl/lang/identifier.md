@@ -16,20 +16,16 @@ __`[edge]`__
 
 ## raw_identifier
 
-__`[path]`__ [ngl:lang:identifier]()
-
 __`[rule]`__
-- must match a-z
+
+- rule of ngl:shape:identifier
 
 ---------------------------------------
 
 ## alias
 
-__`[path]`__ [ngl:alias]
-
 __`[example]`__
 ```
-? ngl:edge<alias> ngl:concept ngc
 ngl:alias<ngl:concept> ngc
 ```
 
@@ -38,14 +34,16 @@ ngl:alias<ngl:concept> ngc
 ## parametrization
 
 __`[description]`__
+
 Every described identifier can be parameterized
 
-__`[syntax]`__
-> *described_identifier*< `(` *described_identifier* *new_identifier* `) list(comma separator)` >
+__`[shape]`__
+> _ngs:identifier_< `ngc:many<` _ngs:identifier_ `>` >
 
 ### explicitly required
 
 __`[description]`__
+
 A parameterised identifier can use the order or explicitly named parameters
 
 __`[example]`__
@@ -57,13 +55,14 @@ ngl:concept:container matrix
     ngl:concept:number <columns> // 2
     ngl::concept:size ( rows * columns )
 
-    <data_type> .data // 3, redescribe :data from ngl::container
+    <data_type> .data // 3, redescribe container.data
 }
 
 // parameters order
-matrix<4, 2, ngl::float> float_matrix;
+matrix<4 2 ngl::float> float_matrix;
+
 // named parameters
-matrix<data_type ngl::float, rows 4, columns 4> float_matrix4x4;
+matrix<data_type: ngl::float rows: 4 columns: 4> float_matrix4x4;
 ```
 
 ---------------------------------------

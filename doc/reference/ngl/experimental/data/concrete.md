@@ -9,11 +9,6 @@ __`[edge]`__
 
 - [ngl:storage](../storage.md)
 
-__`[shape]`__
-> _ngs:scalar_description_ ngs:concrete
-
-__`[exemple]`__
-
 ``` 
 ngl concrete
 {
@@ -22,5 +17,14 @@ ngl concrete
 }
 
 ngc:string<"Hello"> concept_string
-ngl:concrete<concept_string, ngl:storage:entity> concrete_string
+ngl:concrete<my_string, ngl:storage:entity> concrete_string
+
+ngl:alias< ngl:concrete<ngc:string, read> > ngr_string
+
+ngl:alias< ngl:concrete<ngc:string, <access> > > ngr_string<access>
+
+context : program
+concretization_step
+concept : source code
+concrete : binary 
 ```

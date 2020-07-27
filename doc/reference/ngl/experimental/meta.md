@@ -57,6 +57,8 @@ ngc movie
 {
     + ngc:serialisation<movie, binary>
 
+    + ngc:storable<movie>
+
     ngc:id
     ngc:name
     ngc:duration
@@ -64,7 +66,7 @@ ngc movie
 
 main
 {
-    (ngc:movie + ngc:serialisation) serial_movie
+    (ngc:movie + ngc:serialisation) serialisable_movie
     movie.load<>
 }
 

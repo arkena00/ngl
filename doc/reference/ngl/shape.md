@@ -1,153 +1,64 @@
-# ngl:shape __`[experimental]`__
+# ngl:shape
 
 __`[description]`__
 
-A ngl:shape describes the shape of ngl:data
+A ngl:shape describes the concrete shape of ngl:data
 
-concrete shape : literals
-concept shape : data structure
+It's described using intrinsic concepts.
+
+The shape of ngl itself is read during the ngl:phase:shape
+
+__`[shape]`__
+
+> ngl:shape { `ngc:many<` _ngs:identifier_ `>` }
+
 __`[example]`__
 
 
 ```
-ngl:shape:element digit
+ngl:shape digit
 {
-    digit == [0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9]
-}
-
-ngl:concept digit
-{
-    ngl:data <value>
-    ngl:rule
-    {
-        digit == (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)
-    }
+    ngc:range<0 9>
 }
 
 ngl:shape integer
 {
-     ngc:many<ngc:digit>
-     
-     ngl:rule
-     {
-        integer[0] != 0
-     }
+     ngc:sequence<
+        ngc:and< ngc:not<0> ngc:digit>
+        ngc:many<ngc:digit>
+     >
 }
 
-// ngl:concept program
-ngl:concrete<program> source_code (ngl:shape:ngl)
-nglc:concrete<program> machine_code (ngl:shape:binary)
-
-// ngl:concept 4
-- 0100 ngl:storage:environment | environment:shape : ngl:shape:binary | concept:shape : ngl:shape:binary
-- 0100 ngl:storage:source_code | source_code:shape : ngl:shape:string | concept:shape : ngl:shape:binary
-- 4 ngl:storage:source_code | source_code:shape : ngl:shape:string | concept:shape : ngl:shape:digit
-- quatre ngl:storage:source_code | source_code:shape : ngl:shape:string | concept:shape : ngl:shape:literal_digit 
-
-00001101011111101010111010
-[A0FF34951536E9F500] ngl:storage:source_code ngl:shape:string
-00001101011111101010111010
+ngl:shape binary_number
+{
+    ngc:many< ngc:or<0 1> >
+}
 ```
 
+## shape conceptualisation
 
-```
-ngl:constant<string, "zeta"> zeta;
+__`[description]`__
 
-ngl:function convert
+To conceptualise a shape, it requires an edge with a concept
+
+__`[exemple]`__
+
+````
+ngl:shape add
 {
-    ngl:concrete <input>
-    ngl:shape <input_shape>
-    ngl:shape <output_shape>
-    .result = nglc:convert<input, output_shape> // use compiler conversion
-    // .result = ads:convert<input, output_shape> // custom conversion
+     ngc:sequence< ngs:identifier ngs:plus ngs:identifier >
 }
 
-ngl:convert<4 ngs:string>
-ngl:convert<"quatre" ngs:integer>
-ngl:convert<"4" ngs:integer>
-
-
-ngl shape
+ngl:concept:math add
 {
-    ngl:rule <?standard>
-    ngc:char| escape_symbol = $
-            | delimiter = $
+    ngc:math:number n1
+    ngc:math:number n2
 
-    ngl:rule { // html format check }
+    ngc:math:number .result
 }
 
-ngl:format xml
-{
-    .escape_symbol = $
-    .delimiter = __
-}
+ngl:edge<ngl, ngl:shape:add, ngl:concept:math:add>
+// ngs:identifier[0] -> n1 
+// ngs:identifier[1] -> n2 
+````
 
-ngl:format:xml html
-{
-    .standard = ngl:rule:xml:html 
-}
-
-html test
-{__
-    <form>
-        <input text = "$ zeta $" />
-    </form>
-}__
-
-ngc:program
-{
-    ngl::print<test.form.input.text>
-}
-
-
-ngl:format:html zeta_form
-<form>
-    <p>test</p>
-    <input text = "$ ngc:string <value> $" />
-</form>
-
-ngl:format:json zeta_form
-{
-    "form": {
-
-
-ngc:int v = 4
-ngl:format<v, ngc:string> // "4"
-ngl:format<v, ngc:lang:fr> // quatre
-
-
-ngl:format log_format
-{
-    .escape_symbol = [ { } ]
-    .delimiter = [ < > ]
-}
-
-log{{ temps : <time> [ <level> ] | message : <message> }}
-
-
-
-
-ngl:shape brainfuck
-{
-    .delimiter [ $ ]
-    .incrustation [ $ ]
-    .element [ < > + - . , [ ] ]
-}
-
-ngl:program hello_world
-{
-    .shape brainfuck
-    +[-->-[>>+>-----<<]<--<---]>-.>>>+.>>..+++[.>]<<<<.+++.------.<<-.>>>>+.
-}
-
-ngl:data<shape: xml> form
-{
-    <form>
-        <p>test</p>
-        <input text = "$ ngc:string <value> $" />
-    </form>
-}
-
-ngl:data
-
-```

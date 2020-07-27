@@ -3,8 +3,6 @@ __`[description]`__
 
 Description of ngl:data
 
-__`[path]`__ [ngl:full:path:to:data](#path)
-
 __`[edge]`__
 
 - [edge1](#edge1)
@@ -15,11 +13,11 @@ __`[rule]`__
 - [rule1](#rule1)
 - [rule2](#rule2)
 
-__`[syntax]`__
+__`[shape]`__
 
->_descriptor_identifier_ _described_identifier_
+>_ngs:identifier_ _ngs:identifier_
 {
-     `(`_something_ _something2_`)` `syntax_descriptor`
+     `ngl:concepts<(` _something_ _something2_ `>`
 }
 
 __`[example]`__

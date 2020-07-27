@@ -20,6 +20,7 @@ ngl storage
 ngl:storage stack
 ngl:storage heap
 ngl:storage filesystem
+ngl:storage database
 ngl:storage garbage_collector // ngl:data without edges are deleted
 ngl:storage entity // ngl:data stored in the program binary
 ```

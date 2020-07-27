@@ -35,6 +35,7 @@ ngl constant
 }
 
 ngl:constant<4> my_int
+
 my_int = 3 // ngl add the edge write from my_int to literal_3
            // ngl:edge<ngl, my_int, literal_3, write>
            // broken rule
@@ -60,6 +61,27 @@ ngl:function divide
 
     .result (x / y)
 }
+
+
+**a
+*a
+a * a
+
+ngl:shape mul 
+{
+    ngl:identifier * ngl:identifier
+}
+
+ngl:shape op 
+{
+    *ngl:identifier
+}
+
+ngl:shape op 2
+{
+    **ngl:identifier
+}
+
 
     ngl:rule no_zero
     {
