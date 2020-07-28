@@ -49,7 +49,7 @@ ngl:shape add
      ngc:sequence< ngs:identifier ngs:plus ngs:identifier >
 }
 
-ngl:concept:math add
+ngl:concept:math sum
 {
     ngc:math:number n1
     ngc:math:number n2
@@ -57,8 +57,8 @@ ngl:concept:math add
     ngc:math:number .result
 }
 
-ngl:edge<ngl, ngl:shape:add, ngl:concept:math:add>
-// ngs:identifier[0] -> n1 
-// ngs:identifier[1] -> n2 
+ngl:edge<ngl, ngl:shape:add, ngl:concept:math:sum>
+// ngs:identifier[0] -> n1
+// ngs:identifier[1] -> n2
 ````
 

@@ -1,11 +1,27 @@
+ngl:data
+{
+    ngl:storage
+}
+
+ngl:concept container
+{
+    ngl:data <data>
+}
+
 ngl:concept:container matrix // data_type unknown, has to be define in current context
 {
+    <data_type> .data // redescription
+
     ngl:concept:number <rows>
     ngl:concept:number <columns>
     ngl::concept:size ( rows * columns )
 
-    <data_type> .data // redescription
 }
+
+matrix<ngc:int, 4, 4>
+
+matrix<ngc:lib_int, "quatre", 4>
+
 
 // meta concept
 ngl meta
@@ -18,7 +34,7 @@ ngl:meta<ngc:matrix> meta_matrix
 {
     ngl:branch
     {
-        ^.size > 8000 (^.storage ngl:storage:dynamic)
+        meta.concept.size > 8000 (meta.concept.storage ngl:storage:dynamic)
         ^..storage ngl:storage:static // <=> meta.concept.storage ngl:storage:static // concept is deduced
     }
 }

@@ -32,3 +32,56 @@ ngc test
 int z
 dbl d // error
 ```
+
+
+
+//
+
+
+
+
+cluster A
+ngc movie
+{
+    ngc:string name
+    ngc:string director_name
+}
+
+
+cluster B
+ngc movie
+{
+    ngc:string title
+    ngc:name date
+
+    fn display()
+}
+
+ngc:movie
+{
+    display() {}
+}
+
+fiability
+quality
+version 1 2 3 4
+
+
+//
+cluster main
+
+ngc movie
+{
+    ngc:string title
+    ngc:string director
+}
+
+ngc:movie movie;
+std::cout << movie.name;
+
+ngl:concept_shape<movie_A>
+!=
+ngl:concept_shape<movie_B>
+
+nglc -import cluster_main concepts
+> clusterA found

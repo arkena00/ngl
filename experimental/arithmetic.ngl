@@ -60,6 +60,8 @@ ngl:function
     ngl:data result
 }
 
+ngl:concept math
+
 ngc:math:add add
 {
     ngc:integer op1
@@ -68,8 +70,41 @@ ngc:math:add add
     .result = ngl:instruction:add<op1, op2>
 }
 
-ngc:sequence add
 
+template<class T>
+T add(T a, T b) {}
+
+
+template<>
+std::vector<int> add<std::vector<int>>(std::vector<int> a, std::vector<int> b)
+{
+    algo
+}
+
+
+ngl:concept:function add
+{
+    <ngl:data:concrete> data
+    data:concept <a>
+    data:concept <b>
+
+    data .result
+}
+
+ngl:concept:function:add<ngc:container:vector>
+{
+    .result (
+        algo...
+    )
+}
+
+ngl:concept:function:add<ngc:number>
+{
+    .result ngl:instruction:add<.a, .b>
+}
+
+
+ngc:sequence add
 ngl:function sum
 {
     <[args]>

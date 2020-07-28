@@ -73,3 +73,54 @@ ngl:concept:io write
 }
 
 ngl:concrete<ngl, ngl:shape:assignment, ngl:concept:assign>
+
+//
+ngl:lang:parameterised_scalar_description
+{
+    <ngs:identifier>
+    <ngs:identifier>
+    <ngs:parameterised_identifier> = "generalise"
+}
+
+A:D
+A::D
+A:<is>D
+A::<is>D
+
+A:<nge:any>D
+
+ngc:animal <> cat
+ngc:animal <generalise> dog
+
+? namespace, contenance, héritage
+
+ngc:machin ads:bidule
+
+ngc:truc <has> bidule
+{
+
+}
+
+
+ngc:animal <- (dog, cat, truc)
+
+ngc:animal:dog
+{
+
+}
+
+
+ngc:animal:cat
+ngc:animal:<
+
+ngl:concept ads:animal
+{
+    poils
+}
+animal:poils
+
+ngl:concept:animal cat
+{
+    john-<friend_with>-jack
+    john--B
+}

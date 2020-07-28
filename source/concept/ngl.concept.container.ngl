@@ -1,3 +1,19 @@
+
+//fichier A
+    ngl:cluster my_module
+
+    ngl:concept truc
+//fichier B
+    ngl:cluster my_module
+
+// lib
+(A, B) -> cluster truc
+cluster truc -> (A, B)
+
+// crypto
+
+
+
 ngl data
 {
     ngl:storage <storage>

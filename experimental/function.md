@@ -37,17 +37,11 @@ ngl:main
 
 ngl:program main
 {
-    ngc:int a
-    ngc:int b
-    ngc:int tmp
+    ngc:input<ngc:string> age
+        
+    ngl:function:format<"votre age est {}", age>
 
-    ngl:loop
-    {
-        tmp = a + b
-        a = b
-        b = tmp
-        ngl:print<b>
-    }
+    ngl:sprint<> [Votre age est <age>]
 }
 
 ```

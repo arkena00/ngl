@@ -10,13 +10,13 @@ ngl:data concept
     .storage
 }
 
-ngl::concept container
+ngl:concept container
 {
     .storage ngl:storage:heap
     <ngl:data> data_type // data to store
 }
 
-ngl:concept:container<data_type> matrix // data_type unknown, has to be define in current context
+ngl:concept:container matrix
 {
     ngl:concept:number <rows>
     ngl:concept:number <columns>
@@ -45,3 +45,12 @@ ngl:meta<ngc:matrix> meta_matrix
 // concrete
 matrix<4, 4, ngl:float> concrete_matrix;
 ```
+
+ngl:program main
+{
+    print<"coucou">
+    
+    &aze
+    std::addressof(aze)
+
+}

@@ -55,8 +55,6 @@ ngc serialisation
 
 ngc movie
 {
-    + ngc:serialisation<movie, binary>
-
     + ngc:storable<movie>
 
     ngc:id

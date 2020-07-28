@@ -85,7 +85,7 @@ int main()
 
         // auto parameterized_identifier = shapes.add(ngl::shape_sequence(chevron_close, chevron_open, chevron_close));
 
-        std::string data = "ngl:shape comparison [==] // test";
+        std::string data = "ngl:shape comparison [==]";
 
 
         shapes.display();

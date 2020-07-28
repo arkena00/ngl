@@ -72,7 +72,6 @@ ngc:math
     [ngc:real; 0 .. n] R+
 }
 
-
 ngc:math:function divide
 {
     .classification R*

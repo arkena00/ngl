@@ -25,13 +25,3 @@ ngl:environment computer
         atom = ngl:byte (8bits)
     }
 }
-
-ngl:entity:os
-{
-    ngl:entity:storage | filesystem
-                       | stack
-                       | heap
-}
-
-
-ngl.entity

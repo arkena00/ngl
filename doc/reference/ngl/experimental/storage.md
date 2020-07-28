@@ -4,7 +4,9 @@ __`[description]`__
 
 A storage is a support for a [ngl:data](data.md) (filesystem, virtual memory, database)
 It is a region of a [ngl:environment](environment.md)
-Each [ngl:data] has a storage.
+Each [ngl:data] is on a storage.
+
+ngl:storage have rules
 
 __`[edge]`__
 
@@ -37,3 +39,22 @@ ngl:concept matrix
     concept:data:storage ngl:storage:heap
 }
 ```
+
+
+program entity storage 
+[3                       ]
+
+garbage collected storage
+[                        ]
+
+dynamic storage
+[                        ]
+
+database  storage
+[                        ]
+
+stack storage
+[                        ]
+
+proc register storage
+[                        ]
