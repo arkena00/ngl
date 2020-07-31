@@ -1,12 +1,12 @@
 # ngl project
-## general
+## general (conception)
 - [ ] build system
 - [ ] libraries (cluster)
 - [ ] parallelism
 - [ ] error system
 - [ ] entities interactions
 
-## language
+## language (conception)
 - [x] ngl:data:concept
 - [x] ngl:data:concrete
 - [ ] ngl:storage
@@ -21,17 +21,19 @@
 - [ ] expressions
 
 
-## concepts
+## concepts (ngl implementation)
 - [ ] ngc:arithmetic
 - [ ] ngc:container
 - [ ] ngc:execution
     - [ ] branch
     - [ ] loop
 
-## compiler
+## compiler (c++ implementation)
 - [x] dynamic lexer
-- [ ] parser design
+- [ ] parser (design)
 - [ ] parser
 - [ ] program_graph
 - [ ] multiple codegen (meta, llvm)
+- [ ] rule checker (design)
+- [ ] rule checker
 
