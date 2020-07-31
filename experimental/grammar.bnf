@@ -1,0 +1,18 @@
+
+<description> ::= <vector_description> | <scalar_description>
+<vector_description> ::= <identifier> <space> <raw_identifier> "{" <description>* "}"
+<scalar_description> ::= <identifier> <space> <raw_identifier>
+
+
+<identifier> ::= <raw_identifier> | <path_identifier> | <parameterized_identifier>
+<path_identifier> ::= <scalar_identifier> (<edge> <scalar_identifier>)+
+<scalar_identifier> ::= <raw_identifier> | <parameterized_identifier>
+<parameterized_identifier> ::= <raw_identifier> "<" <identifier> (" " <identifier>)* ">"
+<raw_identifier> ::= <identifier_symbol> <identifier_symbol>*
+<identifier_symbol> ::= <letter> | <digit> | <underscore>
+
+<letter> ::= [a-z]
+<digit> ::= [0-9]
+<underscore> ::= "_"
+<edge> ::= ":"
+<space> ::= " "+
