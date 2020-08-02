@@ -38,6 +38,7 @@ L | 00000000000000000001101000000100 | 00000000000000000000100000000000 | 000000
 ```
 
 **output expected**
+```
 description (parser_state_id: 100)
     scalar_description (parser_state_id: 001)
         ID (ngl)
@@ -48,4 +49,5 @@ description
         ID (ngl)
     vector_description
         ID (NGL)
+```
         
