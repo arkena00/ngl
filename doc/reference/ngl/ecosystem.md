@@ -2,12 +2,11 @@
 
 __`[description]`__
 
-The ecosystem of ngl represents external tools. 
+The ecosystem of ngl represents external tools and data of the program.
 
-__`[example]`__
+__`[edges]`__
 
-
-```
-ngl:ecosystem:eco
-
-```
+- [benchmark](../ecosystem/benchmark.md)
+- [build](../ecosystem/build.md)
+- [doc](../ecosystem/doc.md)
+- [test](../ecosystem/test.md)

@@ -1,13 +1,12 @@
 # reference
 
 - ngl
-    - [eocsystem](ngl/eocsystem.md)
+    - [ecosystem](ngl/ecosystem.md)
+        - [benchmark](ngl/ecosystem/benchmark.md)
         - [build](ngl/ecosystem/build.md)
         - [doc](ngl/ecosystem/doc.md)
-        - [benchmark](ngl/ecosystem/benchmark.md)
         - [test](ngl/ecosystem/test.md)
-        
-
+    
     - lang
         - [description](ngl/lang/description.md)
         - [identifier](ngl/lang/identifier.md)
@@ -49,17 +48,3 @@
         - [math](ngl/concept/math.md)
         - [project](ngl/concept/project.md)
 
-
-ngl:function test
-{
-    trucs
-}
-
-ngl:bench<test>
-{
-    azeaze
-}
-
-ngl:ecosystem:doc
-
-nc --bench truc.ngl
