@@ -22,21 +22,24 @@ namespace ngl
         [[nodiscard]] std::vector<ngl::shape_data>& datas();
         void display() const;
 
-        ngl::shape_data add(ngl::shape_type, std::vector<uint64_t> data, const std::string& name = "shape");
-        ngl::shape_data add(ngl::shape_type, char data, const std::string& name = "shape");
-        ngl::shape_data add(ngl::shape_type, uint64_t data, const std::string& name = "shape");
+        ngl::shape_data add(ngl::shape_type, std::vector<uint64_t> data, const std::string& name = "shape", bool is_parser = false);
+        ngl::shape_data add(ngl::shape_type, char data, const std::string& name = "shape", bool is_parser = false);
+        ngl::shape_data add(ngl::shape_type, uint64_t data, const std::string& name = "shape", bool is_parser = false);
 
-        ngl::shape_data add(ngl::shape_element, const std::string& name = "shape_element");
-        ngl::shape_data add(ngl::shape_element_vector, const std::string& name = "shape_element_vector");
-        ngl::shape_data add(ngl::shape_many, const std::string& name = "shape_many");
-        ngl::shape_data add(ngl::shape_not, const std::string& name = "shape_not");
-        ngl::shape_data add(ngl::shape_or, const std::string& name = "shape_or");
-        ngl::shape_data add(ngl::shape_range, const std::string& name = "shape_range");
-        ngl::shape_data add(ngl::shape_sequence, const std::string& name = "shape_sequence");
-        ngl::shape_data add(ngl::shape_space space, const std::string& name = "shape_space");
+        ngl::shape_data add(ngl::shape_element, const std::string& name = "shape_element", bool is_parser = false);
+        ngl::shape_data add(ngl::shape_element_vector, const std::string& name = "shape_element_vector", bool is_parser = false);
+        ngl::shape_data add(ngl::shape_many, const std::string& name = "shape_many", bool is_parser = false);
+        ngl::shape_data add(ngl::shape_not, const std::string& name = "shape_not", bool is_parser = false);
+        ngl::shape_data add(ngl::shape_or, const std::string& name = "shape_or", bool is_parser = false);
+        ngl::shape_data add(ngl::shape_range, const std::string& name = "shape_range", bool is_parser = false);
+        ngl::shape_data add(ngl::shape_sequence, const std::string& name = "shape_sequence", bool is_parser = false);
+        ngl::shape_data add(ngl::shape_space space, const std::string& name = "shape_space", bool is_parser = false);
 
         uint64_t scalar_shapes_count() const;
         uint64_t vector_shapes_count() const;
+
+        uint64_t parser_index = 0;
+        uint64_t parser_shape_state_ = 0;
 
     private:
         std::string name_;
@@ -45,6 +48,8 @@ namespace ngl
         uint64_t scalar_shapes_ = 0;
         uint64_t vector_shapes_ = 0;
         uint64_t shape_data_index_ = 0;
+
+
     };
 } // ngl
 

@@ -10,7 +10,6 @@
 - [x] ngl:data:concept
 - [x] ngl:data:concrete
 - [ ] ngl:storage
-- [ ] ngl:storage
 - [ ] ngl:cluster
 - [ ] ngl:edge
 - [ ] ngl:entity

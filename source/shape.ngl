@@ -1,8 +1,13 @@
-ngl:shape:element comparison ==
-ngl:shape:element open_brace {
-ngl:shape:element line_return \n
-ngl:shape:element edge :
-ngl:shape:element space \s
+ngl:shape letter
+{
+    ngc:range< a z >
+}
+
+ngl:shape digit
+{
+    ngc:range< 0 9 >
+}
+
 
 ngl:shape letter
 {
@@ -10,7 +15,11 @@ ngl:shape letter
 }
 
 
+// intrinsic
 ngl:shape scalar_description
 {
-    ngl:shape:identifier ngl:shape:identifier
+    ngc:sequence<ngl:shape:identifier ngl:shape:identifier>
 }
+
+aaaaaaaaaaaaaaaaaaaaaaaa
+seq<a, b> aa

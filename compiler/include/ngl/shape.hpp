@@ -31,6 +31,8 @@ namespace ngl
         uint64_t vector_size = 0;
         uint64_t vector_index = 0;
         uint64_t vector_id = 0;
+        bool capture = false;
+        bool is_parser = false;
     };
 
     struct shape_element
@@ -85,6 +87,9 @@ namespace ngl
     {
         template<class... Shapes>
         explicit shape_sequence(Shapes&&... shapes) : data{ std::forward<Shapes>(shapes).index... }
+        {}
+
+        explicit shape_sequence(std::vector<uint64_t> v) : data{ std::move(v) }
         {}
         std::vector<uint64_t> data;
     };

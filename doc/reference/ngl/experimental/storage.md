@@ -58,3 +58,7 @@ stack storage
 
 proc register storage
 [                        ]
+
+
+ngc:int x
+test<x>

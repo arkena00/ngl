@@ -9,9 +9,22 @@ namespace ngl
     class parser
     {
     public:
-        parser(ngl::lexer& lexer)
+        explicit parser(ngl::lexer& lexer)
             : lexer_{ lexer }
         {
+
+        }
+
+        void process(const std::string& source)
+        {
+            /*
+            lexer_.set_source(source);
+
+            while (lexer_.has_shapes())
+            {
+                auto shape = lexer_.next_shape();
+                lexer_.display(shape);
+            }*/
         }
 
     private:

@@ -2,6 +2,16 @@
 an object is not considered constant during concretisation, after finalisation, the concretised object respect the constants rules
 
 
+ngl:rule fn_const_on
+{
+    ngc:function <fn>
+    ngl:data <data>
+
+    ngl:rule
+    {
+        !ngl:edge<ngl, fn, data, write>
+    }
+}
 
 ngc cursor_container
 {

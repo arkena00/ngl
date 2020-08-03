@@ -7,6 +7,7 @@ ngl ngl
     data
     entity
     concept
+    shape
 }
 
 ngl data
@@ -22,6 +23,6 @@ ngl:environment computer
 
     ngl:data
     {
-        atom = ngl:byte (8bits)
+        element = ngl:byte (8bits)
     }
 }

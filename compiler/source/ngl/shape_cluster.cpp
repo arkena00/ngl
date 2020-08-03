@@ -23,7 +23,7 @@ namespace ngl
         std::cout << std::endl;
     }
 
-    ngl::shape_data shape_cluster::add(ngl::shape_type shape_type, std::vector<uint64_t> data, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_type shape_type, std::vector<uint64_t> data, const std::string& name, bool is_parser)
     {
         vector_datas_.push_back(std::make_unique<std::vector<uint64_t>>(std::move(data)));
 
@@ -32,7 +32,7 @@ namespace ngl
         shape.index = shape_data_index_++;
         shape.id = 1u << shape.index;
         shape.type = static_cast<uint64_t>(shape_type);
-        shape.data = reinterpret_cast<uint64_t>(std::addressof(*(vector_datas_.back().get())));
+        shape.data = reinterpret_cast<uint64_t>(std::addressof(*(vector_datas_.back())));
         shape.name = name;
 
         //for (const auto& sh_id : vector_datas_.back()) shape.vector_id |= sh_id;
@@ -45,12 +45,12 @@ namespace ngl
         return shape;
     }
 
-    ngl::shape_data shape_cluster::add(ngl::shape_type shape_type, char data, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_type shape_type, char data, const std::string& name, bool is_parser)
     {
-        return add(shape_type, static_cast<uint64_t>(data), name);
+        return add(shape_type, static_cast<uint64_t>(data), name, is_parser);
     }
 
-    ngl::shape_data shape_cluster::add(ngl::shape_type shape_type, uint64_t data, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_type shape_type, uint64_t data, const std::string& name, bool is_parser)
     {
         ngl::shape_data shape;
 
@@ -78,40 +78,44 @@ namespace ngl
         shape.data = data;
         shape.name = name;
 
+        shape.is_parser = is_parser;
+
+        if (shape.is_parser) parser_shape_state_ |= shape.id;
+
         shape_datas_.push_back(shape);
         return shape;
     }
 
-    ngl::shape_data shape_cluster::add(ngl::shape_element element, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_element element, const std::string& name, bool is_parser)
     {
-        return add(shape_type::scalar_element, element.data, name);
+        return add(shape_type::scalar_element, element.data, name, is_parser);
     }
-    ngl::shape_data shape_cluster::add(ngl::shape_element_vector element, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_element_vector element, const std::string& name, bool is_parser)
     {
-        return add(shape_type::scalar_element_vector, element.data, name);
+        return add(shape_type::scalar_element_vector, element.data, name, is_parser);
     }
-    ngl::shape_data shape_cluster::add(ngl::shape_or or_, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_or or_, const std::string& name, bool is_parser)
     {
-        return add(shape_type::logical_or, or_.data, name);
+        return add(shape_type::logical_or, or_.data, name, is_parser);
     }
-    ngl::shape_data shape_cluster::add(ngl::shape_range range, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_range range, const std::string& name, bool is_parser)
     {
-        return add(shape_type::scalar_range, range.data, name);
+        return add(shape_type::scalar_range, range.data, name, is_parser);
     }
-    ngl::shape_data shape_cluster::add(ngl::shape_many many, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_many many, const std::string& name, bool is_parser)
     {
-        return add(shape_type::vector_many, many.data, name);
+        return add(shape_type::vector_many, many.data, name, is_parser);
     }
-    ngl::shape_data shape_cluster::add(ngl::shape_not not_, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_not not_, const std::string& name, bool is_parser)
     {
-        return add(shape_type::logical_not, not_.data, name);
+        return add(shape_type::logical_not, not_.data, name, is_parser);
     }
-    ngl::shape_data shape_cluster::add(ngl::shape_sequence sequence, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_sequence sequence, const std::string& name, bool is_parser)
     {
-        return add(shape_type::vector_sequence, std::move(sequence.data), name);
+        return add(shape_type::vector_sequence, std::move(sequence.data), name, is_parser);
     }
-    ngl::shape_data shape_cluster::add(ngl::shape_space space, const std::string& name)
+    ngl::shape_data shape_cluster::add(ngl::shape_space space, const std::string& name, bool is_parser)
     {
-        return add(shape_type::space, std::move(space.data), name);
+        return add(shape_type::space, space.data, name, is_parser);
     }
 } // ngl

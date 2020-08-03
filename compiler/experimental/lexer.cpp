@@ -59,7 +59,15 @@ int main()
     try
     {
         ngl::shape_cluster shapes;
+        ngl::shape_cluster parser_shapes;
 
+        auto colon = shapes.add(ngl::shape_element(':'), "element_:");
+        auto digit = shapes.add(ngl::shape_range('0', '9'), "range_09");
+
+        shapes.add(ngl::shape_many(colon), "");
+        shapes.add(ngl::shape_many(digit), "");
+
+        /*
         auto space = shapes.add(ngl::shape_space(' '));
 
         auto min_letter = shapes.add(ngl::shape_range('a', 'z'), "range_az");
@@ -67,6 +75,7 @@ int main()
         auto digit = shapes.add(ngl::shape_range('0', '9'), "range_09");
         auto underscore = shapes.add(ngl::shape_element('_'), "element__");
         auto colon = shapes.add(ngl::shape_element(':'), "element_:");
+        auto dot_colon = shapes.add(ngl::shape_element(';'), "element_;");
         auto bracket_open = shapes.add(ngl::shape_element('['), "element_[");
         auto bracket_close = shapes.add(ngl::shape_element(']'), "element_]");
         //auto chevron_open = shapes.add(ngl::shape_element('<'), "element_<");
@@ -74,23 +83,23 @@ int main()
 
         auto letter = shapes.add(ngl::shape_or(min_letter, max_letter), "letter");
 
-        auto identifier_symbol = shapes.add(ngl::shape_or(letter, digit, underscore), "id_symbol");
-        auto many_identifier_symbol = shapes.add(ngl::shape_many(identifier_symbol), "id_symbol+");
-        auto raw_identifier = shapes.add(ngl::shape_sequence(letter, many_identifier_symbol), "raw_identifier");
+        auto letters = shapes.add(ngl::shape_many(letter), "letters");
+        //auto digits = shapes.add(ngl::shape_many(digit), "digits");
 
 
-        auto not_bracket_close = shapes.add(ngl::shape_not(bracket_close), "not_]");
-        auto concrete_data = shapes.add(ngl::shape_sequence(bracket_open, not_bracket_close, bracket_close), "concrete");
+        //auto path_end = shapes.add(ngl::shape_sequence(colon, letter));
+        //auto many_path_end = shapes.add(ngl::shape_many(path_end));
 
+        auto path_identifier = shapes.add(ngl::shape_sequence(letters, colon, digit));
+         */
 
-        // auto parameterized_identifier = shapes.add(ngl::shape_sequence(chevron_close, chevron_open, chevron_close));
-
-        std::string data = "ngl:shape comparison [==]";
-
+        //std::string data = "aa:0bb:1";
+        std::string data = ":::000";
 
         shapes.display();
 
         ngl::lexer lx{ shapes };
+        //lx.add(parser_shapes);
 
         //
         lx.process(data);
@@ -118,18 +127,6 @@ int main()
 
     return 0;
 }
-
-
-/*
-ngl test
-ngl test {  }
-
-scalar_desc : sequence<identifier, identifier>
-vector_desc : sequence<identifier, identifier, {, }>
-
-identifier  identifier
-
-*/
 
 
 /*
@@ -172,4 +169,39 @@ shorthand: ^[']
     I = I + (((TF & 1u) ^ 1u) & ((TF & 2u) >> 1)) % S;
 
 
-    */
+
+
+G (100)
+
+ngl
+    add_shape (101)
+00
+    add_shape (101)
+
+NGL
+    add_shape (110)
+00
+    add_shape (110)
+
+100 : desc = ngl::description
+001 : sd = ngl::scalar_description
+
+101 : sd = ngl::scalar_description
+        .add(ngl)
+        .add(00)
+desc.add(sc)
+
+110 : vd = ngl::vector_description
+        .add(ngl)
+        .add(00)
+desc.add(sc)
+ ...
+
+
+   desc
+   /  \
+  SC  VD
+/  \  /  \
+ID  ID ID ID
+
+*/

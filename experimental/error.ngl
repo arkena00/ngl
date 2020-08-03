@@ -3,11 +3,6 @@ ngl:function divide
     ngl:int <x>
     ngl:int <y>
 
-    ngl:branch<(y == 0)>
-    {
-        .error
-    }
-
     ngl:rule
     {
         y != 0
@@ -15,6 +10,8 @@ ngl:function divide
 
     .result (x / y)
 }
+
+ngl:rule_broken<ngl:function:divide, (error)>
 
 ngl:function test
 {

@@ -13,14 +13,6 @@
 
 namespace ngl
 {
-
-
-    /*
-    extern "C"
-    {
-        uint64_t lexer_process(const char*, shape_data*);
-    }*/
-
     struct location
     {
         size_t origin;
@@ -29,6 +21,7 @@ namespace ngl
 
     struct shape
     {
+        uint64_t id{};
         std::string name;
         ngl::location location{};
     };
@@ -44,12 +37,15 @@ namespace ngl
         void process();
         void process(const std::string&);
 
+        void parse();
+
         void process_v2(const std::string&);
         void asm_process();
 
         void add(ngl::shape_cluster&);
-        void add_shape(const std::string& name, ngl::location);
+        void add_shape(uint64_t shape_id, const std::string& name, ngl::location);
 
+        std::string_view display(const ngl::shape&);
         void display();
 
         [[nodiscard]] std::string_view data() const;
@@ -64,6 +60,8 @@ namespace ngl
         std::string_view data_;
         std::vector<shape> shapes_;
         std::vector<std::reference_wrapper<ngl::shape_cluster>> shape_clusters_;
+
+        unsigned int parser_cursor_ = 0;
 
         std::vector<std::pair<element_type, element_type>> element_ranges_;
         std::vector<element_type> element_scalars_;
