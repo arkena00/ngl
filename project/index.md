@@ -1,7 +1,7 @@
 # ngl project
 ## general (conception)
 - [ ] build system
-- [ ] libraries (cluster)
+- [x] libraries (cluster)
 - [ ] parallelism
 - [ ] error system
 - [ ] entities interactions
@@ -10,7 +10,7 @@
 - [x] ngl:data:concept
 - [x] ngl:data:concrete
 - [ ] ngl:storage
-- [ ] ngl:cluster
+- [x] ngl:cluster
 - [ ] ngl:edge
 - [ ] ngl:entity
 - [ ] ngl:meta
@@ -20,15 +20,16 @@
 - [ ] expressions
 
 
-## concepts (ngl implementation)
+## concepts (ngl implementation) (stdlib)
 - [ ] ngc:arithmetic
 - [ ] ngc:container
 - [ ] ngc:execution
     - [ ] branch
     - [ ] loop
 
-## compiler (c++ implementation)
+## compiler (c++ implementation) (ça va être fun)
 - [x] dynamic lexer
+- [ ] cluster implementation
 - [ ] parser (design)
 - [ ] parser
 - [ ] program_graph

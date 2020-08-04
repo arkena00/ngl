@@ -12,6 +12,10 @@
         - [identifier](ngl/lang/identifier.md)
 
     - concept (intrinsic)
+        - [cluster](ngl/cluster.md)
+            - [concept](ngl/cluster/cluster.md)
+            - [entity](ngl/cluster/entity.md)
+            - [foreign](ngl/cluster/foreign.md)
         - [data](ngl/data.md)
             - [concept](ngl/data/concept.md)
             - [concrete](ngl/data/concrete.md)
@@ -24,9 +28,7 @@
             - [description](ngl/lang/description.md)
             - [identifier](ngl/lang/identifier.md)
             
-        - concept (intrinsic)
-            - [cluster](ngl/cluster.md)
-        
+        - concept (intrinsic)        
             - [data](ngl/data.md)
                 - [concept](ngl/data/concept.md)
                 - [concrete](ngl/data/concrete.md)
@@ -43,7 +45,7 @@
                 - [instruction](ngl/execution/instruction.md)
                 - [loop](ngl/execution/loop.md)
     
-    - ngl concept library
+    - ngl concept cluster (ncc)
         - [container](ngl/concept/container.md)
         - [math](ngl/concept/math.md)
         - [project](ngl/concept/project.md)
