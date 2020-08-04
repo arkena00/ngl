@@ -53,6 +53,62 @@ ngl:branch<point, color>
     (point.x == 0 && point.y == 5)
 }
 
+
+ngl:more_than_branch<i>
+{
+    (0) i > 0
+    (5) i > 5
+}
+
 //
 ngl:metabranch
+
+// shape matching
+ngl:branch<url>
+{
+    ("http://" ngs:word "." ngs:domain) .result url
+    (ngs:word "." ngs:domain) .result ("http://" url)
+}
+
+ngs ip
+{
+    ngs:ip_number "." ngs:ip_number "." ngs:ip_number "." ngs:ip_number
+}
+
+ngs:ip my_ip
+ngl:branch<my_ip>
+{
+    (my_ip.ip_number[0] == 127) // is_local
+    (my_ip.ip_number[0] == 0) // error
+}
+
+ngl:branch<bitset>
+{
+    ([111] ..) 11100010
+    ([00] .. [11]) 00100011
+    ([0001] [?] [011]) 00010011 | 00011011
+}
+
+// sugar
+(127.?.?.?)
+(!127.?.?.?)
+
+if (a == 1)
+{
+    if (b == 2)
+        if (c == 3)
+}
+
+ngl:nested_branch<a, b, c>
+{
+    (1) {
+        print<n1>
+        print<n11>
+        }
+     -> (2) print<n2>
+     --> (3) print<n3>
+
+     > 
+}
+
 ```

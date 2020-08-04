@@ -17,5 +17,5 @@ __`[How to compile]`__
 $ ls
 ngl.ngl
 
-$ nglc ngl.ngl 
+$ nc ngl.ngl 
 ```

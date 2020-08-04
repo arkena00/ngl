@@ -10,3 +10,9 @@ __`[edges]`__
 - [build](../ecosystem/build.md)
 - [doc](../ecosystem/doc.md)
 - [test](../ecosystem/test.md)
+
+## ngl:ecosystem:import
+
+```
+ngl:concrete<ngc:array, ngl:storage:entity> img = ngl:ecosystem:import<"/res/image.png">
+```

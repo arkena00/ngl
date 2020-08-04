@@ -28,30 +28,23 @@ ngl:ecosystem project
     ngc::string version
     ngc::path root
     ngc:meta:tree<project> project_tree
-
-//    ngl:rule
-//    {
-//        // project_tree == fichiers | dossiers
-//    }
 }
 
 ngl:ecosystem:project nc
 {
-  .name "nc"
-
-  .project_tree
-  {
-      ngc:folder bin
-      ngc:folder examples
-      ngc:folder include
-      {
+    .name "ngl compiler"
+    
+    .project_tree
+    {
+        ngc:folder bin
+        ngc:folder examples
+        ngc:folder include
+        {
           ngc:folder ngl:meta<nc>.name
-      }
-  }
+        }
+    }
 
-  // ngl:environment:standard_output = printer
-
-  ngl:environment.architecture = x64
+    ngl:environment:architecture [x64]
 }
 
 // non-intrusive version
