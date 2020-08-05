@@ -25,7 +25,7 @@ ngl:concept movie                   // Here movie is in the main cluster of
     ngc::int <release_date>         //
 }                                   //
 
-    // Export private concept via the ngl entity to the entity:cluster beta
+// Export private concept via the ngl entity to the entity:cluster beta
 ngl:edge<ngl, ngl::movie, ngl:entity:cluster:beta, nge::export>
 
 

@@ -85,3 +85,22 @@ ngl:branch zero_branch
     
     fn:terminate
 }
+
+
+ngx:function add
+{
+    ngc::number <a>
+    ngc::number <b>
+
+    ngx:branch<ngl:phase>
+    {
+        (ngl:phase:compilation)
+        {
+            .result = 0
+        }
+        (ngl:phase:execution)
+        {
+            .result = (a + b)
+        }
+    }
+}

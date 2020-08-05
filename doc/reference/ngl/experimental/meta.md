@@ -55,14 +55,20 @@ ngc serialisation
 
 ngc movie
 {
-    + ngc:storable<movie>
+    -> ngc:serializable
+    -> ngc:storable
+   
+     ngl:edge<ngl, movie, ngc:serialisation<movie>, nge:trait>
+
+
+    ngl:edge<ngl, movie, ngc:serialisation<movie>, nge:trait>
 
     ngc:id
     ngc:name
     ngc:duration
 }
+ngl:program
 
-main
 {
     (ngc:movie + ngc:serialisation) serialisable_movie
     movie.load<>

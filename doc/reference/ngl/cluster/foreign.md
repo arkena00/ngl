@@ -20,8 +20,8 @@ ngl:foreign:cluster sfml
 // program.ngl
 ngl:cluster main
 
-ngl:edge<ngl, main, ngl:entity:cluster:beta, nge:import>    // import in main cluster
-ngl:edge<ads, ngl, ngl:entity:cluster:beta, nge:import>     // import globally
+ngl:edge<ngl, main, ngl:cluster:foreign:sfml, nge:import>    // import in main cluster
+ngl:edge<ngl, ngl, ngl:cluster:foreign:sfml, nge:import>     // import globally
 
-ngl:foreign:cluster:sfml.init       // call a foreign function
+ngl:foreign:cluster:sfml.init                                // call a foreign function
 ```

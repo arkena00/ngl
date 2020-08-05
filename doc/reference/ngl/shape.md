@@ -2,7 +2,7 @@
 
 __`[description]`__
 
-A ngl:shape describes the concrete shape of ngl:data
+A **ngl:shape** describes the concrete shape of **ngl:data**
 
 It's described using intrinsic concepts.
 
@@ -41,15 +41,17 @@ __`[description]`__
 
 To conceptualise a shape, it requires an edge with a concept
 
-__`[exemple]`__
+__`[example]`__
 
 ````
+// math.ngl
 ngl:shape add
 {
      ngc:sequence< ngs:identifier ngs:plus ngs:identifier >
 }
 
-ngl:concept:math sum
+ngl:cluster math
+ngl:concept sum
 {
     ngc:math:number n1
     ngc:math:number n2

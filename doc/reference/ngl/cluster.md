@@ -10,6 +10,9 @@ __`[edges]`__
 - [entity](cluster/entity.md)
 - [foreign](ecosystem/foreign.md)
 
+
+## Same cluster in multiple files
+
 __`[example]`__
 
 ```
@@ -27,4 +30,18 @@ ngl:cluster:main
 // zeta.ngl
 ngl:cluster main
 a = 8 // a is accessible in zeta.ngl, it belongs to main cluster
+```
+
+## Use
+
+__`[description]`__
+
+Description of the use directive to use external clusters or concepts conflicting with another.
+
+```ngl
+ngl:cluster use
+{
+    (ngl:cluster | ngl:concept) <identifier>
+    ngc::folder <path>
+}
 ```
