@@ -62,27 +62,6 @@ ngl:function divide
     .result (x / y)
 }
 
-
-**a
-*a
-a * a
-
-ngl:shape mul 
-{
-    ngl:identifier * ngl:identifier
-}
-
-ngl:shape op 
-{
-    *ngl:identifier
-}
-
-ngl:shape op 2
-{
-    **ngl:identifier
-}
-
-
     ngl:rule no_zero
     {
         .require <value> != 0
@@ -93,3 +72,37 @@ ngl:rule<divide, no_zero<divide.y>, positive<[divide.x, divide.y]>>
 
 ```
 
+
+```
+ngl:rule fn_const_on
+{
+    ngc:function <fn>
+    ngl:data <data>
+
+    ngl:rule
+    {
+        !ngl:edge<ngl, fn, data, write>
+    }
+}
+
+ngc cursor_container
+{
+    ngc:array<int>
+    int cursor
+
+    fn next {} // read edge this -> array // write edge this -> cursor
+    fn clear {} // write edge this -> array
+
+    ngl:rule:fn_const_on<next, array>
+
+    ngl:rule
+    {
+        // ngl:const<cursor_container> // merge rules
+        !ngl:edge<ngl, cursor_container.next, array, write>
+    }
+}
+
+ngl:const<cursor_container> const_container
+const_container.clear // fail
+const_container.next // ok
+```

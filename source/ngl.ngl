@@ -1,4 +1,4 @@
-// self descriptor (ngl entity describe its concepts)
+// self descriptor (ngl entity describe itself)
 ngl ngl
 {
     environment
@@ -18,11 +18,16 @@ ngl data
 ngl:environment computer
 {
     ngl:entity os
-
-    ngl:storage ram, hdd
-
-    ngl:data
     {
-        element = ngl:byte (8bits)
+        console
+        {
+            input
+            ouput
+        }
+    }
+
+    ngl:storage
+    {
+        ram, hdd
     }
 }

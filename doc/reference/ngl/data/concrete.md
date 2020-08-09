@@ -2,7 +2,7 @@
 
 __`[description]`__
 
-A concrete is a [ngl:data](../data.md) representing the concretization of a [ngl:concept](../concept.md)
+A concrete is a [ngl:data](../data.md) representing the concretization of a [ngl:concept](concept.md)
 in the [ngl:entity] storage space.
 
 __`[edge]`__
@@ -17,16 +17,25 @@ __`[exemple]`__
 
 ## Concrete
 
-```cpp
-ngl concrete
+ngc test
 {
-    ngl:concept <concept>
-    ngl:storage <storage>
+    ngc:int <x> = [0]
+    ngc:int <y> = [12]
+    <ngc:string> = [coucou] ngs:ret [line2]
+    ngc:string <test> = __[coucou [test] ]__
 }
 
-ngc:string<[Hello]> concept_string
-ngl:concrete<concept_string, ngl:storage:entity> concrete_string
+ngc:point p
+p.x = [25]
+p.y = [30]
 
+[4] : 1 concept (number)
+[four] : 2 concepts (number, string)
+ngc:add<[4], [four]> == [8]
+ngl:edge<ngl, [four], [4]>
+
+
+```cpp
 // integer array, deduced
 [16 51 156]
 
@@ -89,9 +98,11 @@ slice ([123 456 789 222 000] @2..-2) [789 222]                  // list @x..y : 
 reverse ([123 456 789] -@0..-1) [789 456 123] // reverse index 0 to last
 rotate ([123 456 789] @-1..1) [789 123 456] // index last to 1
 foreach ([123 456 789 000] $ (+3, *4, /2, -7))
+```
 
 
-
+## experimental
+```
 ([123 456] + [111 222])
 123 + 111
 456 + 222
