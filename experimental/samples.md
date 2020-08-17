@@ -121,4 +121,4 @@ pipeline.add<data>
 
 ngl:data data
 
-data:f1:f2<?, 7>:<f3 & f4>
+data:f1:f2<?, 7>:parallel<f3 & f4>
