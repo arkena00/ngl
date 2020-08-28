@@ -15,7 +15,7 @@ namespace ngl
         void process(int argc, const char** argv);
 
     private:
-        ngl::compiler nglc_;
+        ngl::compiler nc_;
     };
 } // ngl
 

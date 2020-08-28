@@ -97,8 +97,21 @@ set_target_properties(nc PROPERTIES
             OUTPUT_NAME nc)
 
 # common lib
+# pegtl
+add_library(lib_pegtl INTERFACE)
+target_include_directories(lib_pegtl SYSTEM INTERFACE ${NC_THIRD_PARTY_ROOT}/PEGTL/include)
+
 # experimental
-add_subdirectory(experimental)
+if (NC_EXPERIMENTAL)
+    add_subdirectory(experimental)
+endif()
 
 # test
-add_subdirectory(test)
+if (NC_TEST)
+    add_subdirectory(test)
+endif()
+
+# benchmark
+if (NC_BENCHMARK)
+    add_subdirectory(benchmark)
+endif()

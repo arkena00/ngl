@@ -32,10 +32,10 @@ namespace ngl
         // parse cl
         cl::ParseCommandLineOptions(argc, argv);
 
-        nglc_.set_flags(compiler_flags.getBits());
+        nc_.set_flags(compiler_flags.getBits());
 
-        nglc_.init();
-        nglc_.process(input_filename.c_str());
+        nc_.init();
+        nc_.process(input_filename.c_str());
 
         // post process
 

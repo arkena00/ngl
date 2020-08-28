@@ -7,9 +7,9 @@ set(THIRD_PARTY_BENCHMARK_LIB ${CMAKE_CURRENT_BINARY_DIR}/third_party_benchmark/
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/third_party_benchmark)
 add_custom_target(third_party_benchmark
         ALL
-        COMMAND ${CMAKE_COMMAND} -DBENCHMARK_ENABLE_GTEST_TESTS=OFF ${NGLC_THIRD_PARTY_ROOT}/benchmark
+        COMMAND ${CMAKE_COMMAND} -DBENCHMARK_ENABLE_GTEST_TESTS=OFF ${NC_THIRD_PARTY_ROOT}/benchmark
         COMMAND ${CMAKE_COMMAND} --build . --target benchmark --config ${CMAKE_BUILD_TYPE}
-        COMMAND ${CMAKE_COMMAND} -E copy ${THIRD_PARTY_BENCHMARK_LIB} ${NGLC_THIRD_PARTY_ROOT}/benchmark/lib/benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}
+        COMMAND ${CMAKE_COMMAND} -E copy ${THIRD_PARTY_BENCHMARK_LIB} ${NC_THIRD_PARTY_ROOT}/benchmark/lib/benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/third_party_benchmark"
         COMMENT "Building benchmark"
         )
@@ -24,12 +24,12 @@ set(CMAKE_ASM_NASM_COMPILE_OBJECT
 set(CMAKE_ASM_NASM_FLAGS "${ASM_NASM_FLAGS}")
 
 function(bench_target target)
-    target_include_directories(${target} PRIVATE ${NGLC_THIRD_PARTY_ROOT}/benchmark/include)
-    target_link_libraries(${target} lib_nglc lib_pegtl)
-    target_link_libraries(${target} "${NGLC_THIRD_PARTY_ROOT}/benchmark/lib/benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}" shlwapi)
-    add_dependencies(${target} lib_nglc third_party_benchmark lib_pegtl)
+    target_include_directories(${target} PRIVATE ${NC_THIRD_PARTY_ROOT}/benchmark/include)
+    target_link_libraries(${target} lib_nc lib_pegtl)
+    target_link_libraries(${target} "${NC_THIRD_PARTY_ROOT}/benchmark/lib/benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}" shlwapi)
+    add_dependencies(${target} lib_nc third_party_benchmark lib_pegtl)
     set_target_properties(${target} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${NGLC_BIN_ROOT}/benchmark
+            RUNTIME_OUTPUT_DIRECTORY ${NC_BIN_ROOT}/benchmark
             OUTPUT_NAME ${target})
 endfunction()
 
