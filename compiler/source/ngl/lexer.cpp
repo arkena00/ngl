@@ -6,23 +6,19 @@
 #include <bitset>
 #include <numeric>
 
-bool flip_ = false;
-
-bool flip(bool n) { return !n; }
-
-void flip(bool n, std::bitset<64>& b) { n ? b.flip() : b; }
-
 namespace ngl
 {
-    lexer::lexer() {}
+    lexer::lexer()
+    {}
 
-    lexer::lexer(ngl::shape_cluster& shape_cluster)
+    lexer::lexer(ngl::shape_cluster shape_cluster)
         : data_{}
     {
-        shape_clusters_.emplace_back(shape_cluster);
+        shape_clusters_.emplace_back(std::move(shape_cluster));
+        root_ = graph_.emplace("shape");
     }
 
-    void lexer::process(const std::string& data)
+    void lexer::process(std::string_view data)
     {
         data_ = data;
         process();
@@ -31,11 +27,19 @@ namespace ngl
     // todo : use 3 registers for scalar, vector and parser states
     void lexer::process()
     {
+        reset();
+
         try
         {
             uint64_t vector_iterator = 0;
             std::bitset<64> shape_state;
             std::bitset<64> previous_state;
+            std::bitset<64> sequence_state;
+
+            bool finalize = false;
+
+            uint64_t match_state = 0;
+            uint64_t parser_state = 0;
 
             uint64_t vector_state = 0;
             uint64_t pvector_state = 0;
@@ -46,19 +50,16 @@ namespace ngl
             size_t space = 0;
 
             if (shape_clusters_.empty()) ngl_error("Lexer requires at least 1 shape_cluster");
-            auto& shape_data = shape_clusters_[0].get().datas();
-            auto scalar_shapes_count = shape_clusters_[0].get().scalar_shapes_count();
+            auto& shape_cluster = shape_clusters_[0];
+            auto& shape_data = shape_cluster.datas();
+            auto scalar_shapes_count = shape_cluster.scalar_shapes_count();
 
-            uint64_t parser_state = shape_clusters_[0].get().parser_shape_state_;
+            uint64_t fragment_state = shape_cluster.fragment_state();
 
-            std::cout << "\n" << std::bitset<32>(shape_clusters_[0].get().parser_shape_state_) << "\n";
-
-            flip_ = false;
 
             for (i = 0; i < data_.size(); ++i)
             {
                 shape_state.reset();
-                flip(flip_, shape_state);
                 const auto& element = data_[i];
                 //const auto& next_element = data_[i];
 
@@ -83,7 +84,7 @@ namespace ngl
                         break;
 
                     case shape_type::scalar_element:
-                        match = flip(element == shape.data);
+                        match = (element == shape.data);
                         shape_state[shape.index] = match;
                         vector_state = 0;
                         //if (match) shape_it = scalar_shapes_count - 1;
@@ -91,7 +92,7 @@ namespace ngl
                         break;
 
                     case shape_type::scalar_element_vector:
-                        match = flip(shape.data == (*reinterpret_cast<const uint64_t*>(&element) & shape.data));
+                        match = shape.data == (*reinterpret_cast<const uint64_t*>(&element) & shape.data);
                         shape_state[shape.index] = match;
                         vector_state = 0;
                         //if (match) shape_it = scalar_shapes_count - 1;
@@ -99,7 +100,7 @@ namespace ngl
                         break;
 
                     case shape_type::scalar_range:
-                        match = flip(element >= (shape.data >> 8u) && element <= ((shape.data << 56u) >> 56u));
+                        match = (element >= (shape.data >> 8u) && element <= ((shape.data << 56u) >> 56u));
                         shape_state[shape.index] = match;
                         vector_state = 0;
                         //if (match) shape_it = scalar_shapes_count - 1;
@@ -107,71 +108,105 @@ namespace ngl
                         break;
 
                     case shape_type::logical_or:
-                        match = flip(shape_state.to_ullong() & shape.data);
+                        match = shape_state.to_ullong() & shape.data;
                         shape_state[shape.index] = match;
-                        //vector_state = 0;
+                        vector_state = 0;
 
                         break;
                     case shape_type::logical_not:
-                        match = flip( !(shape_state.to_ullong() & shape.data));
+                        match = !(shape_state.to_ullong() & shape.data);
                         shape_state[shape.index] = match;
 
                         break;
 
-                        //!     # seq<_ ng _>
-                        //!    _ I: 0 IM: 1 PM: 0 NM: 0 M: 1
-                        //!        n I: 0 IM: 0 PM: 1 NM: 1 M: 0 -> if !IM && PM -> I = 1 IM = 1 M = 1
-                        //!    n I: 1 IM: 1 PM: 1 NM: 0 M: 1
-                        //!    g I: 1 IM: 1 PM: 1 NM: 0 M: 1
-                        //!        _ I: 1 IM: 0 PM: 1 NM: 1 M: 0 -> if !IM && PM -> I = 2 IM = 1 M = 1
-                        //!    _ I: 2 IM: 1 PM: 1 NM: 0 M: 1
-                        //!
-                        //!    #end1 I == LI && is_scalar<LS>               -> I = 0 VID = ~VID
-                        //!    #end2 I == LI && !is_scalar<LS> && NM == 0   -> I = 0 VID = ~VID
                     case shape_type::vector_sequence: {
-                        auto ar = reinterpret_cast<std::vector<uint64_t>*>(shape.data);
-                        auto sequence_size = ar->size();
+                        auto ar = shape_cluster.vector_data(shape.data);
+                        auto sequence_size = ar.size();
 
-                        auto shape_index = ar->operator[](shape.vector_index);
-                        auto next_shape_index = -1;
-                        if (shape.vector_index + 1 < sequence_size) next_shape_index = reinterpret_cast<std::vector<uint64_t>*>(shape.data)->operator[](shape.vector_index + 1);
+                        seq_match:
 
-                        bool pmatch = previous_state[shape.index];
-                        bool index_match = shape_state[shape_index];
+                        //shape_vector_index[];
+                        //std::cout << " I: " << shape.vector_index;
 
-                        if (!index_match && pmatch && next_shape_index != -1)
+                        // end of sequence
+                        if (shape.vector_index == ~uint64_t(0))
                         {
-                            index_match = shape_state[next_shape_index];
-                            shape.vector_index += index_match;
-                            //if () std::cout << " NM " << pmatch;
+                            shape.vector_index = 0;
+                            match = false;
+                            shape_state[shape.index] = false;
+                            sequence_state[shape.index] = true;
+                            //std::cout << "reset";
+                            for (auto s : shape_data)
+                            {
+                                //if (s.type == (uint64_t) ngl::shape_type::vector_sequence) shape.vector_index = 0;
+                            }
                         }
+
+
+                        // current shape in the sequence
+                        auto shape_id = ar[shape.vector_index];
+                        auto shape_scalar = shape_cluster.is_scalar(shape_id);
+
+                        bool index_match = shape_state.to_ullong() & shape_id;
+
+                        // scalar current shape
+                        // if matching shape is scalar, go to the next shape index in the sequence
+                        if (shape_cluster.is_scalar(shape_id))
+                        {
+                            if (index_match)
+                            {
+                                shape.vector_index++;
+                                // sequence end, finalise next iteration
+                                if (shape.vector_index == sequence_size) shape.vector_index = ~uint64_t(0);
+                            }
+                        }
+                        // vector current shape
+                        else
+                        {
+                            // current index doesn t match
+                            if (!index_match)
+                            {
+                                shape.vector_index++;
+                                // end of sequence
+                                if (shape.vector_index == sequence_size)
+                                {
+                                    shape.vector_index = ~uint64_t(0);
+                                    goto seq_match;
+                                }
+                                else
+                                {
+                                    // try next index
+                                    shape_id = ar[shape.vector_index];
+                                    index_match = shape_state.to_ullong() & shape_id;
+
+                                    if (shape_cluster.is_scalar(ar[shape.vector_index]))
+                                    {
+                                        goto seq_match;
+                                    }
+                                    else if (!index_match)
+                                    {
+                                        shape.vector_index = ~uint64_t(0);
+                                    }
+                                }
+                            }
+                        }
+
 
                         match = index_match;
                         shape_state[shape.index] = match;
 
                         if (match) vector_state |= shape.vector_id;
-                        // not matching anymore
-                        if (!match && shape.vector_index + 1 == sequence_size)
-                        {
-                            // prepare for next increment
-                            shape.vector_index = ~uint64_t(0);
-                            flip_ = !flip_;
-                        }
+                        else shape.vector_index = 0;
 
-                        shape.vector_index = (shape.vector_index + (!index_match & pmatch));
-
-                        std::cout << " I: " << shape.vector_index
-                          << " PM: " << pmatch
-                          << " IM: " << index_match
-                          << " M: " << match;
+                        //std::cout << " M: " << match;
 
                         break;
                     }
 
                     case shape_type::vector_many:
-                        match = flip(shape_state[shape.data]);
+                        match = shape_state[shape.data];
                         shape_state[shape.index] = match;
-                        if (flip(match)) vector_state |= shape.vector_id;
+                        if (match) vector_state |= shape.vector_id;
                         //std::cout << " [ _MANY " << shape.name << std::bitset<10>{ shape.vector_id } << ":" << match << " ]";
 
                         break;
@@ -184,43 +219,61 @@ namespace ngl
                 //vector_state = vector_state & ~parser_state;
                 //std::cout << "\n" << std::bitset<32>{ vector_state } << " " << std::bitset<24>{ vector_state & ~parser_state };
 
+                match_state = shape_state.to_ullong() & ~fragment_state & ~shape_cluster.parser_state();
+                vector_state = vector_state & ~shape_cluster.parser_state();
+                parser_state = shape_state.to_ullong() & shape_cluster.parser_state();
 
-                std::cout << " | " << std::bitset<32>{ shape_state.to_ullong() };
-                std::cout << " | " << std::bitset<32>{ vector_state };
+                std::cout << " | S" << std::bitset<24>{ shape_state.to_ullong() };
+                std::cout << " | V" << std::bitset<24>{ vector_state };
+                //std::cout << " | Q" << std::bitset<24>{ sequence_state.to_ullong() };
+                std::cout << " | M" << std::bitset<24>{ match_state };
+                std::cout << " | P" << std::bitset<24>{ parser_state };
 
-                //std::cout << " | " << std::bitset<32>{ parser_state & shape_state.to_ullong() };
-
+                //std::cout << " | " << std::bitset<24>{ parser_state & shape_state.to_ullong() };
                 //std::cout << debug;
 
+                if (!match_state)
+                {
+                    std::cout << "\n";
+                    ngl_error("unexpected element: {}", element);
+                    throw std::logic_error("lexer error : shape is a fragment");
+                }
+/*
                 if (shape_state.to_ullong() == 0)
                 {
                     ngl_error("unexpected element: {}", element);
                     break;
-                }
+                }*/
 
                 // analyse mode
                 // check if vector_state has single bit when previous_vector_state != vector_state // bool has_single_bit = (-v ^ v) <  -v;
 
-                // scalar finalisation
-                /*
-                if ((previous_state.to_ullong() & vector_state_mask.to_ullong()) == 0)
-                {
-                    add_shape(std::to_string(previous_state.to_ullong()), { i - 1 - space, 1 });
-                    vector_iterator = 0;
-                    space = 0;
-                }*/
 
+                // scalar finalization
+                finalize = (-match_state ^ match_state) < -match_state && shape_cluster.is_scalar(match_state);
+                // vector finalization
+                finalize |= (vector_state & pvector_state) == 0;
+                //
+                finalize |= sequence_state.to_ullong();
 
-                // vector finalisation
-                if ((vector_state & pvector_state) == 0)
+                if (parser_state != 0)
                 {
-                    //std::cout << "__" << (i - vector_iterator - space) << "__" << vector_iterator;
+                    //graph_.add()
+                    std::cout << "P::" << shape_cluster.name_of(parser_state);
+                    //graph_.add()
+                }
+
+                if (i == 0) finalize = false;
+                //if (shape_cluster.is_parser())
+
+                // finalization
+                if (finalize)
+                {
                     add_shape(vector_state, std::to_string(pvector_state), { i - vector_iterator - space, vector_iterator });
                     vector_iterator = 0;
+                    sequence_state = 0;
                     space = 0;
-
-                    //std::cout << " | " << std::bitset<32>{ parser_state & shape_state.to_ullong() };
-                    flip_ = !flip_;
+                    finalize = false;
                 }
 
                 previous_state = shape_state;
@@ -268,7 +321,7 @@ namespace ngl
         shape.id = shape_id;
         shape.name = name;
         shape.location = location;
-        shapes_.push_back(shape);
+        shapes_.emplace_back(std::move(shape));
         //parse();
     }
 
@@ -404,5 +457,14 @@ namespace ngl
 
                 } // for shape
                 */
+    }
+
+    const std::vector<ngl::shape_cluster>& lexer::shape_cluster() const
+    {
+        return shape_clusters_;
+    }
+    void lexer::reset()
+    {
+
     }
 } // ngl

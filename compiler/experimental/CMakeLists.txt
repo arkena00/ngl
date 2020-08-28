@@ -1,18 +1,10 @@
 cmake_minimum_required(VERSION 3.14)
 
-enable_language(ASM_NASM)
-
-set(CMAKE_ASM_NASM_OBJECT_FORMAT win64)
-set(CMAKE_ASM_NASM_COMPILE_OBJECT
-        "<CMAKE_ASM_NASM_COMPILER> <INCLUDES> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
-
-set(CMAKE_ASM_NASM_FLAGS "${ASM_NASM_FLAGS}")
-
 function(exp_target target)
-    target_link_libraries(${target} lib_nglc lib_pegtl)
-    add_dependencies(${target} lib_nglc)
+    target_link_libraries(${target} lib_nc)
+    add_dependencies(${target} lib_nc)
     set_target_properties(${target} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${NGLC_BIN_ROOT}/experimental
+            RUNTIME_OUTPUT_DIRECTORY ${NC_BIN_ROOT}/experimental
             OUTPUT_NAME ${target})
 
 endfunction()
@@ -27,8 +19,11 @@ endfunction()
 
 #exp_make(lexer lexer.cpp)
 
-add_executable(exp_lexer lexer.cpp test.asm)
-exp_target(exp_lexer)
+
+
+exp_make(ngl_syntax)
+exp_make(parser)
+exp_make(graph)
 
 
 #cl /subsystem:console ucrt.lib vcruntime.lib msvcrt.lib  output.o

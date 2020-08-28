@@ -2,7 +2,6 @@
 #define COMPILER_INCLUDE_NGL_LANG_HPP_NGL
 
 #include <ngl/assert.hpp>
-#include <ngl/parser.hpp>
 #include <ngl/lexer.hpp>
 
 #include <optional>

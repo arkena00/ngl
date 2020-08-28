@@ -10,6 +10,17 @@
 #include <string>
 #include <unordered_map>
 
+#include <nds/encoder/graph.hpp>
+
+namespace nds::encoders
+{
+    template<> template<>
+    inline std::string dot<>::node_name<std::string>(const std::string& v)
+    {
+        return v;
+    }
+}
+
 namespace ngl
 {
     class compiler

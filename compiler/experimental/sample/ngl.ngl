@@ -1,0 +1,11 @@
+ngl ngl
+{
+    environment
+
+    storage
+    data
+    entity
+    concept
+}
+
+// read the shape.ngl

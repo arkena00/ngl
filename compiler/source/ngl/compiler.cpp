@@ -3,21 +3,11 @@
 #include <fstream>
 #include <iostream>
 
-#include <nds/encoder/graph.hpp>
 #include <ngl/cluster.hpp>
 #include <ngl/lang.hpp>
 
 #include <spdlog/spdlog.h>
 #include <ngl/log.hpp>
-
-namespace nds::encoders
-{
-    template<> template<>
-    std::string dot<>::node_name<std::string>(const std::string& v)
-    {
-        return v;
-    }
-}
 
 namespace ngl
 {
@@ -76,7 +66,7 @@ namespace ngl
         {
             ngl::cluster cluster{ file_path_, std::move(file_data) };
             cluster.process();
-            //concretizer_.process(cluster);
+            concretizer_->process(cluster);
 
             // post flags
             if (has_flag(flags::graph))

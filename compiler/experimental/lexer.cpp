@@ -1,124 +1,96 @@
 #include <ngl/lexer.hpp>
 #include <ngl/shape_cluster.hpp>
 
-#include <tao/pegtl.hpp>
-
-void store(const std::string& id, const std::string& input, std::vector<ngl::shape>& output)
-{
-    ngl::shape s;
-    s.name = id + "(" + input + ")";
-    s.location.origin = 0;
-    s.location.size = 10;
-    output.emplace_back(std::move(s));
-}
-
-namespace
-{
-    using namespace tao::pegtl;
-
-    //struct identifier : sor<plus<ranges<'a', 'z', '0', '9'>>, plus<one<'_'>>>{};
-    //identifier: ^[a-zA-Z_][a-zA-Z0-9_\-?']*
-
-    struct letter : sor<ranges<'a', 'z'>, ranges<'A', 'Z'>> {};
-    struct underscore : one<'_'> {};
-    struct dash : one<'-'> {};
-    struct qmark : one<'?'> {};
-    struct squote : one<'\''> {};
-    struct number : ranges<'0', '9'> {};
-    struct identifier : seq<letter, plus<sor<underscore, dash, qmark, squote, letter, number>>> {};
-    struct space : plus<one<' '>> {};
-
-    struct grammar : plus<sor<identifier, plus<one<' '>>>>{};
-
-    template<typename Rule>
-    struct action{};
 /*
-    template<>
-    struct action<identifier>
-    {
-        template<typename ParseInput>
-        static void apply(const ParseInput& input, std::vector<ngl::shape>& output)
-        {
-            store("identifier", input.string(), output);
-        }
-    };*/
-/*
-    template<>
-    struct action<number>
-    {
-        template<typename ParseInput>
-        static void apply(const ParseInput& input, std::vector<ngl::shape>& output)
-        {
-            store("number", input.string(), output);
-        }
-    };*/
-}
+// sequence loop
+(A B C) (A B C)
+ex:
+ngl (: zeta) (: test)
+
+
+// partial sequence
+sequence : (A B C)
+matching (A B Z) : no match, reset the sequence
+
+// nested sequence
+test<zeta<test>>
+
+// recursive rules
+id : raw_id | param_id
+scalar_id : raw_id | param_id
+param_id : raw_id < id >
+
+ */
 
 int main()
 {
     try
     {
+        ngl::shape_cluster cpp;
+        {
+            auto letter = cpp.add(ngl::shape_range('a', 'z'));
+            auto letters = cpp.add(ngl::shape_many(letter));
+            auto S = cpp.add(ngl::shape_element('s'));
+            auto T = cpp.add(ngl::shape_element('t'));
+            auto R = cpp.add(ngl::shape_element('r'));
+            auto U = cpp.add(ngl::shape_element('u'));
+            auto C = cpp.add(ngl::shape_element('c'));
+            cpp.add(ngl::shape_sequence(S, T, R, U, C, T));
+        }
+
+        ngl::shape_cluster seq;
         ngl::shape_cluster shapes;
-        ngl::shape_cluster parser_shapes;
+        auto letter = shapes.add(ngl::shape_range('a', 'z'));
+        auto digit = shapes.add(ngl::shape_range('0', '9'));
+        auto underscore = shapes.add(ngl::shape_element('_'));
+        auto underscores = shapes.add(ngl::shape_many(underscore));
 
-        auto colon = shapes.add(ngl::shape_element(':'), "element_:");
-        auto digit = shapes.add(ngl::shape_range('0', '9'), "range_09");
+        auto letters = shapes.add(ngl::shape_many(letter));
+        auto digits = shapes.add(ngl::shape_many(digit));
 
-        shapes.add(ngl::shape_many(colon), "");
-        shapes.add(ngl::shape_many(digit), "");
+        auto A = seq.add(ngl::shape_element('a'));
+        auto B = seq.add(ngl::shape_element('b'));
+        auto C = seq.add(ngl::shape_element('c'));
+        auto zero = seq.add(ngl::shape_element('0'));
+        auto us = seq.add(ngl::shape_element('_'));
+
+        auto abc = seq.add(ngl::shape_sequence(A, B, C));
+        seq.add(ngl::shape_sequence(zero, abc, zero));
+
+        ngl::lexer lx{ seq };
+        seq.display();
+
+        std::string data = "0abc0_";
 
         /*
-        auto space = shapes.add(ngl::shape_space(' '));
+        seq< "abcd", "0">
 
-        auto min_letter = shapes.add(ngl::shape_range('a', 'z'), "range_az");
-        auto max_letter = shapes.add(ngl::shape_range('A', 'Z'), "range_AZ");
-        auto digit = shapes.add(ngl::shape_range('0', '9'), "range_09");
-        auto underscore = shapes.add(ngl::shape_element('_'), "element__");
-        auto colon = shapes.add(ngl::shape_element(':'), "element_:");
-        auto dot_colon = shapes.add(ngl::shape_element(';'), "element_;");
-        auto bracket_open = shapes.add(ngl::shape_element('['), "element_[");
-        auto bracket_close = shapes.add(ngl::shape_element(']'), "element_]");
-        //auto chevron_open = shapes.add(ngl::shape_element('<'), "element_<");
-        //auto chevron_close = shapes.add(ngl::shape_element('>'), "element_>");
+        <a, b, c, d>
+        101000
+        100100
+        100010
+        0000001
+        abc0
 
-        auto letter = shapes.add(ngl::shape_or(min_letter, max_letter), "letter");
+        (abcd) a b c 0
 
-        auto letters = shapes.add(ngl::shape_many(letter), "letters");
-        //auto digits = shapes.add(ngl::shape_many(digit), "digits");
+        0 001000
+        0 000100
+        0 000010
+        0 000001
+        1 0000001
+        abcd*/
 
 
-        //auto path_end = shapes.add(ngl::shape_sequence(colon, letter));
-        //auto many_path_end = shapes.add(ngl::shape_many(path_end));
-
-        auto path_identifier = shapes.add(ngl::shape_sequence(letters, colon, digit));
-         */
-
-        //std::string data = "aa:0bb:1";
-        std::string data = ":::000";
-
-        shapes.display();
-
-        ngl::lexer lx{ shapes };
-        //lx.add(parser_shapes);
-
-        //
         lx.process(data);
+
+
         std::cout << "\n\nCPP lexer\n";
-        lx.display();
+        std::cout << lx.to_string();
 
         //
         std::cout << "\nASM lexer\n";
         lx.asm_process();
-
-        //
-        std::cout << "\nPEGTL lexer\n";
-        std::vector<ngl::shape> output;
-        memory_input input{ data, "data" };
-        if (!parse<grammar, ::action>(input, output)) std::cout << "err";
-        for (const auto& shape : output)
-        {
-            std::cout << shape.name + " ";
-        }
     }
     catch (const std::exception& e)
     {
@@ -127,19 +99,6 @@ int main()
 
     return 0;
 }
-
-
-/*
-identifier: (letter | cap_letter) id_symbol* ^[a-zA-Z_][a-zA-Z0-9_\-?']*
-operator: ^(\+|\-|\*|/|<=|>=|!=|<|>|@=|@|=|\^)
-capture: ^&[a-zA-Z_][a-zA-Z0-9_\-?']*
-getfield: ^\.[a-zA-Z_][a-zA-Z0-9_\-?']*
-skip: ^[\s]+
-comment: # any
-shorthand: ^[']
- */
-
-
 
 /*
     I: index

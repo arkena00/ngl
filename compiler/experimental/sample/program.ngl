@@ -1,0 +1,25 @@
+ngl:instruction add
+{
+    // omitted
+}
+
+ngl:concept:function add
+{
+    ngl:data <a>
+    ngl:data <b>
+    .result ngl:instruction:add<a, b>
+}
+
+ngl:concept add
+{
+    ngl:data <a>
+    ngl:data <b>
+    .result ngl:function:add<a, b>
+}
+
+ngl:program
+{
+    ngc:number a = 1
+    ngc:number b = 2
+    ngl:concept:add<a, b>
+}
