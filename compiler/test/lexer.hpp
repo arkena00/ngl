@@ -3,7 +3,7 @@
 
 #define LX_EXPECT(...) EXPECT_TRUE(test_tokens(lx, __VA_ARGS__))
 
-template<int... Is, class... Ts>
+template<std::size_t... Is, class... Ts>
 ::testing::AssertionResult has_tokens(const ngl::lexer& lx, std::index_sequence<Is...>, Ts&&... ts)
 {
     bool match_size = lx.shapes().size() == sizeof...(ts);
