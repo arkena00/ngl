@@ -20,7 +20,7 @@ jln_target_interface(lib_ccw INTERFACE
             OPTIMIZATION 0
         )
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(_ITERATOR_DEBUG_LEVEL=0)
     add_compile_options(/MD)
 endif()
