@@ -39,7 +39,7 @@ namespace ngl
         void process(std::string_view);
         void process(const char*) = delete;
 
-        void parse();
+        inline void parse(ngl::node_ptr<std::string>& current_, ngl::shape_cluster& shape_cluster_);
 
         void process_v2(const std::string&);
         void asm_process();
@@ -52,7 +52,7 @@ namespace ngl
 
         void reset();
 
-        [[nodiscard]] const std::vector<ngl::shape_cluster>& shape_cluster() const;
+        [[nodiscard]] const std::vector<ngl::shape_cluster>& shape_clusters() const;
 
         [[nodiscard]] std::string_view data() const;
 

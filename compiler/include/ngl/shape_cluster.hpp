@@ -42,6 +42,12 @@ namespace ngl
             return add(shape, name, false, true);
         }
 
+        template<class T>
+        auto add_parser_fragment(T&& shape, const std::string& name = "parser_fragment")
+        {
+            return add(shape, name, true, true);
+        }
+
         bool is_fragment(uint64_t shape_id) const;
         bool is_parser(uint64_t shape_id) const;
         bool is_scalar(uint64_t shape_index) const;

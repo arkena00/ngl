@@ -28,11 +28,11 @@ int main()
         auto raw_identifier = shapes.add(ngl::shape_sequence(letter, many_identifier_symbol), "raw_identifier");
 
 
-        auto path_edge = shapes.add_parser(ngl::shape_sequence(colon, raw_identifier), "id_edge_path");
-        //auto path_identifier = shapes.add_parser(ngl::shape_sequence(raw_identifier, path_edge));
-
-        //auto SD = shapes.add_parser(ngl::shape_sequence(raw_identifier, raw_identifier), "SD");
-        //auto VD = shapes.add_parser(ngl::shape_sequence(raw_identifier, space, raw_identifier, ob, cb), "VD");
+        auto path_edge = shapes.add_parser_fragment(ngl::shape_sequence(colon, raw_identifier), "id_edge_path");
+        auto path_identifier = shapes.add_parser(ngl::shape_sequence(raw_identifier, path_edge));
+//
+        auto SD = shapes.add_parser(ngl::shape_sequence(path_identifier, space, raw_identifier), "SD");
+//        auto VD = shapes.add_parser(ngl::shape_sequence(raw_identifier, space, raw_identifier, ob, cb), "VD");
 
         //auto g = shapes.add(ngl::shape_or(SD, VD), "SD");
 
@@ -57,7 +57,7 @@ RID EDGE RID
         }
         )";*/
 
-        std::string data = "aa:bb cc_";
+        std::string data = "aa:bb";
 
         lx.process(data);
         std::cout << "\n" << lx.to_string();
