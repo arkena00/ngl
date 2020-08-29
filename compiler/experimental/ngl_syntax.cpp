@@ -28,13 +28,18 @@ int main()
         auto raw_identifier = shapes.add(ngl::shape_sequence(letter, many_identifier_symbol), "raw_identifier");
 
 
-        auto path_edge = shapes.add_parser_fragment(ngl::shape_sequence(colon, raw_identifier), "id_edge_path");
-        auto path_identifier = shapes.add_parser(ngl::shape_sequence(raw_identifier, path_edge));
-//
+        auto path_edge = shapes.add_parser(ngl::shape_sequence(colon, raw_identifier), "id_edge_path");
+        auto path_identifier = shapes.add_parser(ngl::shape_sequence(raw_identifier, path_edge), "path_identifier");
+
         auto SD = shapes.add_parser(ngl::shape_sequence(path_identifier, space, raw_identifier), "SD");
-//        auto VD = shapes.add_parser(ngl::shape_sequence(raw_identifier, space, raw_identifier, ob, cb), "VD");
+//       auto VD = shapes.add_parser(ngl::shape_sequence(raw_identifier, space, raw_identifier, ob, cb), "VD");
 
         //auto g = shapes.add(ngl::shape_or(SD, VD), "SD");
+
+        // TEST
+        // multiple rule true at same time
+        // down rules
+        // up rules
 
 /*
      SD
@@ -42,6 +47,21 @@ int main()
     PID     RID
  /   |   \
 RID EDGE RID
+
+ ngl:concept zeta
+     |        \
+ngl:concept     zeta
+ /   |   \
+ngl  :   concept
+
+1000 SD
+1100 PID
+1110 PID RID
+1101 PID EDGE
+1110 PID RID
+1010 RID
+
+
  */
 
 
@@ -57,7 +77,7 @@ RID EDGE RID
         }
         )";*/
 
-        std::string data = "aa:bb";
+        std::string data = "aa:bb:cc zeta";
 
         lx.process(data);
         std::cout << "\n" << lx.to_string();

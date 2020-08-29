@@ -263,8 +263,15 @@ namespace ngl
                 finalize |= sequence_state.to_ullong();
 
 
-                if (i == 0) finalize = false;
-                //if (shape_cluster.is_parser())
+                if (i == 0)
+                {
+                    finalize = false;
+
+                    //current_ = graph_.add("SD"s, current_);
+                }
+
+
+
 
                 // finalization
                 if (finalize)
@@ -274,19 +281,28 @@ namespace ngl
                     sequence_state = 0;
                     space = 0;
                     finalize = false;
-                    // un nouveau token !
-                    // ngl:shape edge [|]
 
-                    if ((pparser_state & parser_state) < parser_state) {
-                        current_ = graph_.add(to_string(shapes_.back()), graph_.add( "une chaine a la con"s, current_));
-                    }
-                    else if (pparser_state > (pparser_state & parser_state)) {
+                    // move up
+                    if (pparser_state > (pparser_state & parser_state))
+                    {
+                        std::cout << "__UP";
+                        graph_.sources(current_, [&current_](auto&& node_) { current_ = node_; });
                         graph_.add(to_string(shapes_.back()), current_);
-                        graph_.sources(current_, [&current_](auto&& node_) {
-                          current_ = node_;
-                        });
                     }
-                    else if ((pparser_state & parser_state) == parser_state) {
+                    // move down
+                    else if (parser_state > (pparser_state & parser_state))
+                    {
+                        std::cout << "__DOWN";
+                        // right side bit
+                        auto rhs_shape_id = parser_state & (~parser_state << 1u);
+                        const auto& name = shape_cluster.name_of(rhs_shape_id);
+
+                        current_ = graph_.add(name, current_);
+                        graph_.add(to_string(shapes_.back()), current_);
+                    }
+                    // same shape
+                    else if (parser_state == (pparser_state & parser_state))
+                    {
                         graph_.add(to_string(shapes_.back()), current_);
                     }
                 }
