@@ -8,7 +8,6 @@ set(NC_BIN_ROOT ${NGL_ROOT}/compiler/bin)
 
 set(CMAKE_CXX_STANDARD 17)
 
-
 # compiler options
 jln_target_interface(lib_ccw INTERFACE
         WARNINGS strict
@@ -20,9 +19,17 @@ jln_target_interface(lib_ccw INTERFACE
             OPTIMIZATION 0
         )
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_compile_definitions(_ITERATOR_DEBUG_LEVEL=0)
-    add_compile_options(/MD)
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND MSVC)
+    set(NC_COMPILER_ID "Clang-cl")
+else()
+    set(NC_COMPILER_ID ${CMAKE_CXX_COMPILER_ID})
+endif ()
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if ("${NC_COMPILER_ID}" STREQUAL "MSVC" OR "${NC_COMPILER_ID}" STREQUAL "Clang-cl")
+        add_compile_definitions(_ITERATOR_DEBUG_LEVEL=0)
+        add_compile_options(/MD)
+    endif()
 endif()
 
 #
