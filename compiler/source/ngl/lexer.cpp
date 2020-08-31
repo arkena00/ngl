@@ -9,6 +9,12 @@
 #include <string>
 
 using namespace std::string_literals;
+
+uint64_t bit_count(uint64_t i)
+{
+     return std::bitset<64>(i).count();
+}
+
 namespace ngl
 {
     lexer::lexer()
@@ -84,7 +90,7 @@ namespace ngl
                         {
                             space++;
                             if (space == 1) { pvector_state = 0; vector_state = 0; }
-                            continue;
+                            goto jmp;
                         }
                         break;
 
@@ -230,26 +236,21 @@ namespace ngl
                 parser_state = shape_state.to_ullong() & shape_cluster.parser_state() & ~fragment_state;
 
                 std::cout << " | S" << std::bitset<24>{ shape_state.to_ullong() };
-                std::cout << " | V" << std::bitset<24>{ vector_state };
-                //std::cout << " | Q" << std::bitset<24>{ sequence_state.to_ullong() };
+                //std::cout << " | V" << std::bitset<24>{ vector_state };
+                std::cout << " | Q" << std::bitset<24>{ sequence_state.to_ullong() & parser_state };
                 std::cout << " | M" << std::bitset<24>{ match_state };
                 std::cout << " | P" << std::bitset<24>{ parser_state };
 
                 //std::cout << " | " << std::bitset<24>{ parser_state & shape_state.to_ullong() };
                 //std::cout << debug;
 
-                if (!match_state)
+
+                if (shape_state.to_ullong() == 0 && space == 0)
                 {
-                    std::cout << "\n";
                     ngl_error("unexpected element: {}", element);
-                    throw std::logic_error("lexer error : shape is a fragment");
+                    throw std::logic_error("lexer error");
                 }
-/*
-                if (shape_state.to_ullong() == 0)
-                {
-                    ngl_error("unexpected element: {}", element);
-                    break;
-                }*/
+
 
                 // analyse mode
                 // check if vector_state has single bit when previous_vector_state != vector_state // bool has_single_bit = (-v ^ v) <  -v;
@@ -268,6 +269,7 @@ namespace ngl
                     finalize = false;
 
                     //current_ = graph_.add("SD"s, current_);
+                    //current_ = graph_.add("path_identifier"s, current_);
                 }
 
 
@@ -277,17 +279,25 @@ namespace ngl
                 if (finalize)
                 {
                     add_shape(vector_state, std::to_string(pvector_state), { i - vector_iterator - space, vector_iterator });
+
                     vector_iterator = 0;
                     sequence_state = 0;
                     space = 0;
                     finalize = false;
 
+
                     // move up
                     if (pparser_state > (pparser_state & parser_state))
                     {
                         std::cout << "__UP";
-                        graph_.sources(current_, [&current_](auto&& node_) { current_ = node_; });
                         graph_.add(to_string(shapes_.back()), current_);
+                        // get depth
+                        auto depth = bit_count(pparser_state ^ parser_state);
+
+                        for (uint64_t di = 0; di < depth - 1; ++di)
+                        {
+                            graph_.sources(current_, [&current_](auto&& node_) { current_ = node_; });
+                        }
                     }
                     // move down
                     else if (parser_state > (pparser_state & parser_state))
@@ -297,8 +307,8 @@ namespace ngl
                         auto rhs_shape_id = parser_state & (~parser_state << 1u);
                         const auto& name = shape_cluster.name_of(rhs_shape_id);
 
-                        current_ = graph_.add(name, current_);
                         graph_.add(to_string(shapes_.back()), current_);
+                        current_ = graph_.add(name, current_);
                     }
                     // same shape
                     else if (parser_state == (pparser_state & parser_state))
@@ -312,25 +322,45 @@ namespace ngl
 
                 vector_iterator++;
 
-                // std::cout << "\n" << element << " | " << " " << shape_state;
+                jmp:;
+
             } // for data
 
             // last shape
             add_shape(previous_state.to_ullong(), std::to_string(previous_state.to_ullong()), { i - vector_iterator - space, vector_iterator });
             vector_iterator = 0;
 
-            if ((pparser_state & parser_state) < parser_state) {
-                current_ = graph_.add(to_string(shapes_.back()), graph_.add( "une chaine a la con"s, current_));
-            }
-            else if (pparser_state > (pparser_state & parser_state)) {
-                graph_.add(to_string(shapes_.back()), current_);
-                graph_.sources(current_, [&current_](auto&& node_) {
-                  current_ = node_;
-                });
-            }
-            else if ((pparser_state & parser_state) == parser_state) {
-                graph_.add(to_string(shapes_.back()), current_);
-            }
+            //
+
+            // move up
+                    if (pparser_state > (pparser_state & parser_state))
+                    {
+                        std::cout << "__UP";
+                        graph_.add(to_string(shapes_.back()), current_);
+                        // get depth
+                        auto depth = bit_count(pparser_state ^ parser_state);
+
+                        for (uint64_t di = 0; di < depth - 1; ++di)
+                        {
+                            graph_.sources(current_, [&current_](auto&& node_) { current_ = node_; });
+                        }
+                    }
+                    // move down
+                    else if (parser_state > (pparser_state & parser_state))
+                    {
+                        std::cout << "__DOWN";
+                        // right side bit
+                        auto rhs_shape_id = parser_state & (~parser_state << 1u);
+                        const auto& name = shape_cluster.name_of(rhs_shape_id);
+
+                        graph_.add(to_string(shapes_.back()), current_);
+                        current_ = graph_.add(name, current_);
+                    }
+                    // same shape
+                    else if (parser_state == (pparser_state & parser_state))
+                    {
+                        graph_.add(to_string(shapes_.back()), current_);
+                    }
 
             // remove init shape
             //shapes_.erase(shapes_.begin());

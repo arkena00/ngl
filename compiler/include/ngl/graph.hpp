@@ -1,7 +1,7 @@
 #ifndef COMPILER_INCLUDE_NGL_GRAPH_HPP_NGL
 #define COMPILER_INCLUDE_NGL_GRAPH_HPP_NGL
 
-#include <nds/graph/lemon.hpp>
+#include <nds/graph.hpp>
 
 #include <string>
 
@@ -20,6 +20,8 @@ namespace ngl
 
     template<class T>
     using node_ptr = nds::node_ptr<T>;
+
+    using node = nds::node_ptr<std::string>;
 } // ngl
 
 #endif // COMPILER_INCLUDE_NGL_GRAPH_HPP_NGL

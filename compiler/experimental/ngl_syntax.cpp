@@ -10,7 +10,7 @@ int main()
 {
     try
     {
-        //ngl::lexer lx{ ngl::ngl_shape_cluster };
+        //ngl::lexer lx{ ngl::get_shape_cluster() };
         ngl::shape_cluster shapes;
 
         auto space = shapes.add(ngl::shape_element(' '));
@@ -41,6 +41,38 @@ int main()
         // down rules
         // up rules
 
+        auto letter = shapes.add_fragment<ngl::shape_range>("letter", 'a', 'z');
+        auto raw_id = shapes.add_element<ngl::shape_sequence>("raw_id", letter, id_symbol);
+        shapes.add<ngl::shape_sequence>("name", raw_id, raw_id);
+        shapes.add<ngl::shape_sequence>("add", raw_id, ngl::shape_ignore(plus), raw_id);
+
+
+        shapes.display();
+
+        ngl::lexer lx{ shapes };
+
+        /*
+        std::string data = R"(
+        ngl:shape scalar_description
+        {
+            ngc:sequence<ngs:identifier ngs:identifier>
+        }
+        )";*/
+
+        std::string data = "aa:bb zeta ";
+
+        lx.process(data);
+        std::cout << "\n" << lx.to_string();
+
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << e.what();
+    }
+
+    return 0;
+}
+
 /*
      SD
      |     \
@@ -63,33 +95,6 @@ ngl  :   concept
 
 
  */
-
-
-        shapes.display();
-
-        ngl::lexer lx{ shapes };
-
-        /*
-        std::string data = R"(
-        ngl:shape scalar_description
-        {
-            ngc:sequence<ngs:identifier ngs:identifier>
-        }
-        )";*/
-
-        std::string data = "aa:bb:cc zeta";
-
-        lx.process(data);
-        std::cout << "\n" << lx.to_string();
-
-    }
-    catch (const std::exception& e)
-    {
-        std::cout << e.what();
-    }
-
-    return 0;
-}
 
 /*
 L, NB, L

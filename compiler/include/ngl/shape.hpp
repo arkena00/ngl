@@ -39,16 +39,32 @@ namespace ngl
         uint64_t vector_id = 0;
         uint64_t is_fragment = 0;
         uint64_t is_parser = 0;
+        bool ignore = false;
+    };
+
+    struct shape_ignore : shape_data
+    {
+        explicit shape_ignore(const shape_data& sh)
+        {
+            static_cast<shape_data>(*this) = sh;
+            ignore = true;
+        }
     };
 
     struct shape_element
     {
+        static constexpr auto name = "shape_element";
+        static constexpr auto type = shape_type::scalar_element;
+
         explicit shape_element(char e) : data{ e } {}
         char data;
     };
 
     struct shape_element_vector
     {
+        static constexpr auto name = "shape_element_vector";
+        static constexpr auto type = shape_type::scalar_element_vector;
+
         explicit shape_element_vector(std::string_view e)
             : data{ 0 }
         {
@@ -64,6 +80,9 @@ namespace ngl
 
     struct shape_many
     {
+        static constexpr auto name = "shape_many";
+        static constexpr auto type = shape_type::vector_many;
+
         template<class Shape>
         explicit shape_many(Shape shape) : data{ shape.index } {}
         uint64_t data;
@@ -71,6 +90,9 @@ namespace ngl
 
     struct shape_not
     {
+        static constexpr auto name = "shape_not";
+        static constexpr auto type = shape_type::logical_not;
+
         template<class Shape>
         explicit shape_not(Shape shape) : data{ shape.id } {}
         uint64_t data;
@@ -78,6 +100,9 @@ namespace ngl
 
     struct shape_or
     {
+        static constexpr auto name = "shape_or";
+        static constexpr auto type = shape_type::logical_or;
+
         template<class... Shapes>
         explicit shape_or(Shapes... shapes) : data{ (shapes.id  | ...) } {}
         uint64_t data;
@@ -85,12 +110,18 @@ namespace ngl
 
     struct shape_range
     {
+        static constexpr auto name = "shape_range";
+        static constexpr auto type = shape_type::scalar_range;
+
         shape_range(uint8_t b, uint8_t e) : data{ static_cast<uint64_t>(b << 8u | e) } {}
         uint64_t data;
     };
 
     struct shape_sequence
     {
+        static constexpr auto name = "shape_sequence";
+        static constexpr auto type = shape_type::vector_sequence;
+
         template<class... Shapes>
         explicit shape_sequence(Shapes&&... shapes) : data{ std::forward<Shapes>(shapes).id... }
         {}
@@ -102,6 +133,9 @@ namespace ngl
 
     struct shape_space
     {
+        static constexpr auto name = "shape_space";
+        static constexpr auto type = shape_type::space;
+
         explicit shape_space(char s) : data{ static_cast<uint64_t>(s) } {}
         uint64_t data;
     };

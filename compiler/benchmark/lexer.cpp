@@ -22,7 +22,7 @@ namespace ngl_shapes
 
         auto min_letter = shapes.add(ngl::shape_range('a', 'z'));
         auto max_letter = shapes.add(ngl::shape_range('A', 'Z'));
-        auto digit = shapes.add(ngl::shape_range('0', '9'));
+        auto digit = shapes.add_element<ngl::shape_range>("digit", '0', '9');
         auto underscore = shapes.add(ngl::shape_element('_'));
         auto dash = shapes.add(ngl::shape_element('-'));
         auto qmark = shapes.add(ngl::shape_element('?'));

@@ -1,5 +1,4 @@
 #include <ngl/lexer.hpp>
-#include <ngl/parser.hpp>
 #include <ngl/shape_cluster.hpp>
 #include <nds/graph.hpp>
 #include <ngl/cluster.hpp>
@@ -10,36 +9,21 @@ int main()
 {
     try
     {
-        ngl::ngl_shape_cluster ngl_shapes;
-        ngl::lexer lexer {ngl_shapes};
-        std::string source_code = R"(
-ngl:concept function
-{
-    ngl:data result
-}
+        ngl::shape_cluster shapes;
+        auto letter = shapes.add_element<ngl::shape_range>("letter", 'a', 'z');
+        auto plus = shapes.add_fragment<ngl::shape_element>("plus", '+');
 
-ngl:concept:function add
-{
-    ngl::int <a>
-    ngl::int <b>
-    ngl:concept:function:result ngl::instruction_add<a, b>
-}
-)";
+        auto add = shapes.add<ngl::shape_sequence>("add", letter, plus, letter);
 
-        lexer.process(source_code);
+        ngl::lexer lx{ shapes };
 
-        // Parsing algorithm
-//
-//        auto& shapes = lexer.shapes();
-//        ngl::cluster cluster {"main", ""};
-//        auto& graph = cluster.graph();
-//
-//        for (const auto& shape : shapes)
-//        {
-//            std::cout << shape.name << std::endl;
-//        }
+        std::string data{ "a+b" };
+        lx.process(data);
 
-        ngl::parser parser {lexer};
+        std::vector<std::string> v;
+        lx.graph().targets(lx.root(), [&](auto&& n) { v.push_back(*n); });
+
+        std::cout << "\n" << lx.to_string();
 
     } catch (const std::exception& e)
     {
@@ -47,35 +31,3 @@ ngl:concept:function add
     }
 
 }
-
-//int main()
-//{
-//    try
-//    {
-//        ngl::ngl_shape_cluster ngl_shape;
-//
-//        ngl::lexer lx{ ngl_shape };
-//
-//        std::string data = R"(
-//ngl:shape scalar_description
-//{
-//    ngc:sequence<ngs:identifier ngs:identifier>
-//}
-//)";
-//
-//
-//ngl_shape.add(ngl::shape_sequence());
-//
-//
-//
-//    lx.process(data);
-//    std::cout << lx.to_string();
-//
-//    }
-//    catch (const std::exception& e)
-//    {
-//        std::cout << e.what();
-//    }
-//
-//    return 0;
-//}

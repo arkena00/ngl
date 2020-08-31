@@ -50,6 +50,9 @@ namespace ngl
         std::string_view display(const ngl::shape&);
         void display();
 
+        [[nodiscard]] const ngl::graph& graph() const { return graph_; }
+        [[nodiscard]] const ngl::node& root() const { return root_; }
+
         void reset();
 
         [[nodiscard]] const std::vector<ngl::shape_cluster>& shape_clusters() const;
@@ -68,7 +71,7 @@ namespace ngl
         std::vector<ngl::shape_cluster> shape_clusters_;
 
         ngl::graph graph_;
-        ngl::node_ptr<std::string> root_;
+        ngl::node root_;
 
         unsigned int parser_cursor_ = 0;
     };

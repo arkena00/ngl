@@ -90,41 +90,6 @@ namespace ngl
         return shape;
     }
 
-    ngl::shape_data shape_cluster::add(ngl::shape_element element, const std::string& name, bool is_fragment, bool is_parser)
-    {
-        return add(shape_type::scalar_element, element.data, name, is_fragment, is_parser);
-    }
-    ngl::shape_data shape_cluster::add(ngl::shape_element_vector element, const std::string& name, bool is_fragment, bool is_parser)
-    {
-        return add(shape_type::scalar_element_vector, element.data, name, is_fragment, is_parser);
-    }
-    ngl::shape_data shape_cluster::add(ngl::shape_or or_, const std::string& name, bool is_fragment, bool is_parser)
-    {
-        return add(shape_type::logical_or, or_.data, name, is_fragment, is_parser);
-    }
-    ngl::shape_data shape_cluster::add(ngl::shape_range range, const std::string& name, bool is_fragment, bool is_parser)
-    {
-        return add(shape_type::scalar_range, range.data, name, is_fragment, is_parser);
-    }
-    ngl::shape_data shape_cluster::add(ngl::shape_many many, const std::string& name, bool is_fragment, bool is_parser)
-    {
-        return add(shape_type::vector_many, many.data, name, is_fragment, is_parser);
-    }
-    ngl::shape_data shape_cluster::add(ngl::shape_not not_, const std::string& name, bool is_fragment, bool is_parser)
-    {
-        return add(shape_type::logical_not, not_.data, name, is_fragment, is_parser);
-    }
-    ngl::shape_data shape_cluster::add(ngl::shape_sequence sequence, const std::string& name, bool is_fragment, bool is_parser)
-    {
-        return add(shape_type::vector_sequence, std::move(sequence.data), name, is_fragment, is_parser);
-    }
-    ngl::shape_data shape_cluster::add(ngl::shape_space space, const std::string& name, bool is_fragment, bool is_parser)
-    {
-        return add(shape_type::space, space.data, name, is_fragment, is_parser);
-    }
-
-    
-
     const std::string& shape_cluster::name() const { return name_; }
     std::vector<ngl::shape_data>& shape_cluster::datas() { return shape_datas_; }
     uint64_t shape_cluster::scalar_shapes_count() const { return scalar_shapes_; }
@@ -150,9 +115,41 @@ namespace ngl
         if (it == shape_datas_.end()) throw std::logic_error("shape name not found");
         return it->name;
     }
+
+    ngl::shape_cluster& get_shape_cluster()
+    {
+        static ngl::shape_cluster ngl_shape_cluster{ "ngl" };
+        auto newline            = ngl_shape_cluster.add_element<ngl::shape_space>("newline", '\n');
+        auto space              = ngl_shape_cluster.add_element<ngl::shape_space>("space", ' ');
+        auto tab                = ngl_shape_cluster.add_element<ngl::shape_space>("tab", '\t');
+        auto whitespace         = ngl_shape_cluster.add_element<ngl::shape_or>("whitespace", space, tab, newline);
+        auto whitespaces        = ngl_shape_cluster.add_element<ngl::shape_many>("whitespaces", whitespace);
+
+        auto left_chevron       = ngl_shape_cluster.add_element<ngl::shape_element>("left_chevron", '<');
+        auto right_chevron      = ngl_shape_cluster.add_element<ngl::shape_element>("right_chevron", '>');
+        auto left_brace         = ngl_shape_cluster.add_element<ngl::shape_element>("left_brace", '[');
+        auto right_brace        = ngl_shape_cluster.add_element<ngl::shape_element>("right_brace", ']');
+        auto underscore         = ngl_shape_cluster.add_element<ngl::shape_element>("underscore", '_');
+        auto colon              = ngl_shape_cluster.add_element<ngl::shape_element>("colon", ':');
+        auto left_curly_brace   = ngl_shape_cluster.add_element<ngl::shape_element>("left_curly_brace", '{');
+        auto right_curly_brace  = ngl_shape_cluster.add_element<ngl::shape_element>("right_curly_brace", '}');
+        auto comma              = ngl_shape_cluster.add_element<ngl::shape_element>("comma", ',');
+
+        auto digit              = ngl_shape_cluster.add_fragment<ngl::shape_range>("digit", '0', '9');
+        auto lower_letter       = ngl_shape_cluster.add_fragment<ngl::shape_range>("lower_letter", 'a', 'z');
+        auto upper_letter       = ngl_shape_cluster.add_fragment<ngl::shape_range>("upper_letter", 'A', 'Z');
+
+        auto letter             = ngl_shape_cluster.add_fragment<ngl::shape_or>("letter", lower_letter, upper_letter);
+
+        auto number             = ngl_shape_cluster.add_element<ngl::shape_many>("number", digit);
+
+        auto identifier_symbol  = ngl_shape_cluster.add_element<ngl::shape_or>("identifier_symbol", letter, digit, underscore);
+        auto identifier_symbols = ngl_shape_cluster.add_element<ngl::shape_many>("identifier_symbols", identifier_symbol);
+        auto raw_identifier     = ngl_shape_cluster.add_element<ngl::shape_sequence>("raw_identifier", letter, identifier_symbol);
+
+        return ngl_shape_cluster;
+    }
 } // ngl
-
-
 
 /*
 <description> ::= <vector_description> | <scalar_description>

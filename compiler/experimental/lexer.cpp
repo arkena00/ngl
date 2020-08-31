@@ -41,7 +41,7 @@ int main()
         ngl::shape_cluster seq;
         ngl::shape_cluster shapes;
         auto letter = shapes.add(ngl::shape_range('a', 'z'));
-        auto digit = shapes.add(ngl::shape_range('0', '9'));
+        auto digit = shapes.add_element<ngl::shape_range>("digit", '0', '9');
         auto underscore = shapes.add(ngl::shape_element('_'));
         auto underscores = shapes.add(ngl::shape_many(underscore));
 

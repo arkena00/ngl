@@ -10,7 +10,7 @@ namespace ngl
         : name_{ std::move(name) }
         , source_{ std::move(source) }
         , graph_{}
-        , lexer_{ ngl::ngl_shape_cluster }
+        , lexer_{ ngl::get_shape_cluster() }
         , root_{}
     {
         root_ = graph_.add(name_);

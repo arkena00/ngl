@@ -3,10 +3,10 @@
 TEST(parser, basic)
 {
     ngl::shape_cluster shapes;
-    auto letter = shapes.add(ngl::shape_range('a', 'z'));
+    auto letter = shapes.add_element<ngl::shape_range>('a', 'z');
     auto plus = shapes.add_fragment(ngl::shape_element('+'));
 
-    auto add = shapes.add_parser(ngl::shape_sequence(letter, plus, letter), "add");
+    auto add = shapes.add<ngl::shape_sequence>("add", letter, ngl::shape_ignore(plus), letter);
 
     /*!
         add

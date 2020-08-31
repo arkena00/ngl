@@ -5,10 +5,10 @@ class lexer_sequence_vector : public ::testing::Test
 protected:
     void SetUp() override
     {
-        letter = shapes.add_fragment(ngl::shape_range('a', 'z'));
-        digit = shapes.add(ngl::shape_range('0', '9'));
-        underscore = shapes.add_fragment(ngl::shape_element('_'));
-        letters = shapes.add_fragment(ngl::shape_many(letter));
+        letter = shapes.add_fragment<ngl::shape_range>('a', 'z');
+        digit = shapes.add_element<ngl::shape_range>('0', '9');
+        underscore = shapes.add_fragment('_');
+        letters = shapes.add_fragment<ngl::shape_many>(letter);
     }
     ngl::shape_cluster shapes;
     ngl::shape_data digit;
@@ -19,7 +19,7 @@ protected:
 
 TEST_F(lexer_sequence_vector, basic)
 {
-    auto seq = shapes.add(ngl::shape_sequence(underscore, letters, underscore));
+    auto seq = shapes.add_element<ngl::shape_sequence>(underscore, letters, underscore);
 
     {
         ngl::lexer lx{ shapes };
@@ -45,7 +45,7 @@ TEST_F(lexer_sequence_vector, basic)
 
 TEST_F(lexer_sequence_vector, repeat)
 {
-    auto seq = shapes.add(ngl::shape_sequence(underscore, letters));
+    auto seq = shapes.add_element<ngl::shape_sequence>(underscore, letters);
     {
         ngl::lexer lx{ shapes };
         std::string data { "_ngl_ngl" };
@@ -55,7 +55,7 @@ TEST_F(lexer_sequence_vector, repeat)
 }
 TEST_F(lexer_sequence_vector, circular)
 {
-    auto seq = shapes.add(ngl::shape_sequence(underscore, letters, underscore));
+    auto seq = shapes.add_element<ngl::shape_sequence>(underscore, letters, underscore);
     {
         ngl::lexer lx{ shapes };
         std::string data { "_ngl__ngl_" };
